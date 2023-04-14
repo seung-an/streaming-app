@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Header from "./components/Layout/Header";
-import Footer from "./components/Layout/Footer";
-import Menu from "./components/Layout/Menu";
-import Contents from "./components/Layout/Contents";
+import Header from "components/layout/Header";
+import Menu from "components/layout/Menu";
+import Contents from "components/layout/Contents";
 
 function App() {
   useEffect(() => {}, []);
@@ -12,7 +11,6 @@ function App() {
       <Header />
       <Menu />
       <Contents />
-      <Footer />
     </div>
   );
 }

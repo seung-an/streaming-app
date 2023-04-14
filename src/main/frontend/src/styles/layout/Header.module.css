@@ -1,0 +1,26 @@
+.header{
+    width: 100vw;
+    height: 60px;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo{
+    background-color: #282828;
+    height: 50px;
+    width: 200px;
+}
+
+.search{
+    background-color: #282828;
+    height: 50px;
+    width: calc(100vw - 420px);
+}
+
+.account{
+    background-color: #282828;
+    height: 50px;
+    width: 200px;
+}

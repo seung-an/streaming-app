@@ -1,0 +1,9 @@
+.contents{
+    width: calc(100vw - 200px);
+    height: calc(100vh - 60px);
+    overflow-y: scroll;
+    position: fixed;
+    top: 60px;
+    left: 200px;
+    padding: 20px;
+}

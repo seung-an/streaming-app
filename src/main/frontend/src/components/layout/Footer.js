@@ -1,4 +1,4 @@
-import styles from "./Footer.module.css";
+import styles from "styles/layout/Footer.module.css";
 
 function Footer() {
   return <footer className={styles.footer}>Footer</footer>;
