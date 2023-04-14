@@ -1,0 +1,7 @@
+.contents{
+    border: none;
+    width: calc(100vw - 100px);
+    height: calc(100vh - 60px);
+    overflow-y: scroll;
+    background-color: gray;
+}

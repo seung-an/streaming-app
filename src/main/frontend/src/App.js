@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import Header from "./components/Layout/Header";
+import Footer from "./components/Layout/Footer";
+import Menu from "./components/Layout/Menu";
+import Contents from "./components/Layout/Contents";
 
 function App() {
-  const [hello, setHello] = useState('')
-
-  useEffect(() => {
-    axios.get('/api/hello')
-        .then(response => setHello(response.data))
-        .catch(error => console.log(error))
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-      <div>
-        백엔드에서 가져온 데이터입니다 : {hello}
-      </div>
+    <div>
+      <Header />
+      <Menu />
+      <Contents />
+      <Footer />
+    </div>
   );
 }
 
