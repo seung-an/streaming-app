@@ -7,20 +7,56 @@
     justify-content: space-between;
 }
 
-.logo{
-    background-color: #282828;
+.logoArea{
     height: 50px;
     width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.search{
-    background-color: #282828;
+.searchArea{
     height: 50px;
     width: calc(100vw - 420px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.account{
-    background-color: #282828;
+.searchBox{
+    width: 50%;
+    height: 40px;
+    border: 2px solid #282828;
+    border-radius: 10px;
+    background-color: black;
+    padding-left: 10px;
+    display: flex;
+
+}
+
+.searchInput{
+    width: calc(100% - 50px);
+    height: 100%;
+    border: none;
+    background-color: black;
+    color: white;
+}
+
+.searchBtn{
+    width: 40px;
+    height: 100%;
+    border: none;
+    background-color: black;
+}
+
+.searchInput:focus{
+    outline: none;
+}
+
+.accountArea{
     height: 50px;
     width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
