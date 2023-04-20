@@ -1,9 +1,6 @@
 package com.example.streamingapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,10 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "member")
 public class Member implements UserDetails {
     @Id
     @Column(name = "member_code", nullable = false)
@@ -31,8 +30,14 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-//    @Column(nullable = false)
-//    private String email;
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String salt;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default

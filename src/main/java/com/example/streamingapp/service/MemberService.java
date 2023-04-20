@@ -1,5 +1,6 @@
 package com.example.streamingapp.service;
 
+import com.example.streamingapp.domain.Member;
 import com.example.streamingapp.dto.TokenInfo;
 import com.example.streamingapp.repository.MemberRepository;
 import com.example.streamingapp.security.JwtTokenProvider;
@@ -10,10 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.security.SecureRandom;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,14 +46,30 @@ public class MemberService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
+        // 4. refreshToken DB에 저장
+        Member member = memberRepository.findByMemberId(memberId).get();
+        member.setRefreshToken(tokenInfo.getRefreshToken());
+        memberRepository.save(member);
+
         return tokenInfo;
     }
 
     @Transactional
-    public TokenInfo login(String memberId, String password) throws Exception{
+    public TokenInfo refreshToken(String refreshToken) throws Exception{
+
+        Member member = memberRepository.findById(jwtTokenProvider.getMemberCodeByRefreshToken(refreshToken)).get();
+
+        if(!refreshToken.equals(member.getRefreshToken())){
+            throw new Exception("refreshToken 이 유효하지 않습니다.");
+        }
+
+        if(!jwtTokenProvider.validateToken(refreshToken)){
+            throw new Exception("refreshToken 이 유효하지 않습니다.");
+        }
+
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member.getMemberId(), member.getPassword());
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
@@ -59,8 +78,37 @@ public class MemberService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
+        // 4. refreshToken DB에 저장
+        member.setRefreshToken(tokenInfo.getRefreshToken());
+        memberRepository.save(member);
         return tokenInfo;
     }
+
+    @Transactional
+    public Integer join(Map<String, Object> data) throws Exception{
+
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        byte[] bytes = new byte[16];
+        random.nextBytes(bytes);
+
+        // SALT 생성
+        String salt = new String(Base64.getEncoder().encode(bytes));
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+
+        Member member = Member.builder()
+                .memberId((String)data.get("memberId"))
+                .password(getSecurePassword((String)data.get("password"), salt))
+                .email((String)data.get("email"))
+                .salt(salt)
+                .roles(roles)
+                .build();
+
+        memberRepository.save(member);
+
+        return member.getMemberCode();
+    }
+
 
     public String getSecurePassword(String password, String salt) throws NoSuchAlgorithmException {
 

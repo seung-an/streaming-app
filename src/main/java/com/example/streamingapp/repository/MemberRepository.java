@@ -7,9 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findByMemberId(String username);
 
-    @Query(value = "select salt from users where member_id = :id", nativeQuery = true)
+    @Query(value = "select salt from member where member_id = :id", nativeQuery = true)
     String getSalt(@Param("id") String id);
 }

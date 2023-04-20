@@ -44,6 +44,5 @@
   },
   "devDependencies": {
     "prettier": "^2.8.7"
-  },
-  "proxy": "http://localhost:8080"
+  }
 }

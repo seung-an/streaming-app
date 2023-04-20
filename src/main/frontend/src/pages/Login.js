@@ -1,7 +1,8 @@
 import styles from "styles/page/Login.module.css";
-import { api, authAPi } from "api/api";
+import { api, authApi } from "api/api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import cookie from "react-cookies";
 
 function Login() {
   const navigate = useNavigate();
@@ -32,14 +33,16 @@ function Login() {
 
     if (!idRegex.test(inputID) || !pwRegex.test(inputPW)) {
       changeErrorMsg("아이디 또는 비밀번호를 잘못 입력 하였습니다.");
+      return;
     } else {
       changeErrorMsg("");
     }
 
-    api()
-      .post("/member/getToken", { memberId: inputID, password: inputPW })
+    api
+      .post("/member/login", { memberId: inputID, password: inputPW })
       .then((response) => {
         localStorage.setItem("accessToken", response.data.accessToken);
+        cookie.save("refreshToken", response.data.refreshToken, { path: "/" });
         changeErrorMsg("");
         navigate("/");
       })
@@ -79,9 +82,9 @@ function Login() {
           <div className={styles.errorMsg}>{errorMsg}</div>
         ) : null}
         <div className={styles.elmBox}>
-          <a className={styles.signUp} href={"#"}>
-            회원가입
-          </a>
+          <Link to={"/join"}>
+            <div className={styles.signUp}>회원가입</div>
+          </Link>
           <a className={styles.findPw} href={"#"}>
             비밀번호 찾기
           </a>
