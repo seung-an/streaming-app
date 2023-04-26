@@ -1,5 +1,4 @@
 import axios from "axios";
-import cookie from "react-cookies";
 
 const api = axios.create({
   headers: {
@@ -47,19 +46,16 @@ authApi.interceptors.response.use(
     if (status === 401) {
       if (error.response.data.code === 1005) {
         const originalRequest = config;
-        const refreshToken = await cookie.load("refreshToken");
         // token refresh 요청
         await axios
           .post(
             `/member/refreshToken`, // token refresh api
-            {},
-            { headers: { Authorization: `Bearer ${refreshToken}` } }
+            {}
           )
           .then((res) => {
             // 새로운 토큰 저장
             originalRequest.headers.authorization = `Bearer ${res.data.accessToken}`;
             localStorage.setItem("accessToken", res.data.accessToken);
-            cookie.save("refreshToken", res.data.refreshToken, { path: "/" });
           })
           .catch((error) => {
             window.location.href = "/login";

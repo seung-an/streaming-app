@@ -30,35 +30,43 @@ public class MemberController {
     private final MemberService memberService;
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody MemberLoginRequestDto memberLoginRequestDto, HttpServletResponse response) {
-
+        JSONObject resJobj = new JSONObject();
         try {
             String memberId = memberLoginRequestDto.getMemberId();
             String password = memberLoginRequestDto.getPassword();
             TokenInfo tokenInfo = memberService.getToken(memberId, password);
 
-            return new ResponseEntity(tokenInfo, HttpStatus.OK);
+            createCookie("refreshToken", tokenInfo.getRefreshToken(), response);
+            resJobj.put("status", "ERROR");
+            resJobj.put("grantType", tokenInfo.getGrantType());
+            resJobj.put("accessToken", tokenInfo.getAccessToken());
+            return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
-            JSONObject error = new JSONObject();
-            error.put("status", "ERROR");
-            error.put("message", e.getMessage());
-            return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity refreshToken(@RequestHeader(value="Authorization") String refreshToken, HttpServletResponse response) {
-
+    public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject resJobj = new JSONObject();
         try {
-            TokenInfo tokenInfo = memberService.refreshToken(resolveToken(refreshToken));
+            String refreshToken = getCookie("refreshToken", request);
+            TokenInfo tokenInfo = memberService.refreshToken(refreshToken);
 
-            return new ResponseEntity(tokenInfo, HttpStatus.OK);
+            createCookie("refreshToken", tokenInfo.getRefreshToken(), response);
+            resJobj.put("status", "ERROR");
+            resJobj.put("grantType", tokenInfo.getGrantType());
+            resJobj.put("accessToken", tokenInfo.getAccessToken());
+            return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
-            JSONObject error = new JSONObject();
-            error.put("status", "ERROR");
-            error.put("message", e.getMessage());
-            return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,11 +91,25 @@ public class MemberController {
         cookie.setDomain("localhost");
 
 //        cookie.setSecure(true);
-//        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(true);
         cookie.setPath("/");
 
         // add cookie to response
         response.addCookie(cookie);
+    }
+
+    public String getCookie(String cookieName, HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies(); // 모든 쿠키 가져오기
+        if(cookies != null){
+            for (Cookie c : cookies) {
+                String name = c.getName(); // 쿠키 이름 가져오기
+                String value = c.getValue(); // 쿠키 값 가져오기
+                if (name.equals(cookieName)) {
+                    return value;
+                }
+            }
+        }
+        return null;
     }
 
     private String resolveToken(String token) {

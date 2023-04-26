@@ -2,7 +2,6 @@ import styles from "styles/page/Login.module.css";
 import { api, authApi } from "api/api";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import cookie from "react-cookies";
 
 function Login() {
   const navigate = useNavigate();
@@ -42,8 +41,8 @@ function Login() {
       .post("/member/login", { memberId: inputID, password: inputPW })
       .then((response) => {
         localStorage.setItem("accessToken", response.data.accessToken);
-        cookie.save("refreshToken", response.data.refreshToken, { path: "/" });
         changeErrorMsg("");
+        localStorage.setItem("isLogin", "T");
         navigate("/");
       })
       .catch((error) => {

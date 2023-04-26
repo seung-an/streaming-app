@@ -38,12 +38,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
 
         return userCustom;
-
-//        return org.springframework.security.core.userdetails.User.builder()
-//                .username(user.getUsername())
-//                .password(passwordEncoder.encode(user.getPassword()))
-//                .roles(user.getRoles().toArray(new String[0]))
-//                .build();
     }
 
     private static Collection authorities(List<String> roles){
