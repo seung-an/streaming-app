@@ -73,16 +73,16 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity join(@RequestBody Map<String, Object> data, UriComponentsBuilder uriBuilder) {
 
-        JSONObject resultJobj = new JSONObject();
+        JSONObject resJobj = new JSONObject();
         try {
             Integer memberCode = memberService.join(data);
-            resultJobj.put("status", "SUCCESS");
-            return new ResponseEntity(resultJobj, HttpStatus.OK);
+            resJobj.put("status", "SUCCESS");
+            return new ResponseEntity(resJobj, HttpStatus.OK);
         } catch (Exception e) {
 
-            resultJobj.put("status", "ERROR");
-            resultJobj.put("error_massage", e.getMessage());
-            return new ResponseEntity(resultJobj.toJSONString(), HttpStatus.BAD_REQUEST);
+            resJobj.put("status", "ERROR");
+            resJobj.put("error_massage", e.getMessage());
+            return new ResponseEntity(resJobj.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -109,14 +109,6 @@ public class MemberController {
                 }
             }
         }
-        return null;
-    }
-
-    private String resolveToken(String token) {
-        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
-            return token.substring(7);
-        }
-
         return null;
     }
 }

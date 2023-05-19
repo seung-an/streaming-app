@@ -99,6 +99,7 @@ public class MemberService {
         Member member = Member.builder()
                 .memberId((String)data.get("memberId"))
                 .password(getSecurePassword((String)data.get("password"), salt))
+                .name((String)data.get("name"))
                 .email((String)data.get("email"))
                 .salt(salt)
                 .roles(roles)

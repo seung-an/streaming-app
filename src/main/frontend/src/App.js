@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Join from "./pages/Join";
 import TestPage from "./pages/TestPage";
+import MyVideos from "./pages/MyVideos";
 
 function App() {
   useEffect(() => {
@@ -18,6 +19,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path={"/"} element={<Home />} />
             <Route path={"/test"} element={<TestPage />} />
+            <Route path={"/myVideos"} element={<MyVideos />} />
           </Route>
           <Route path={"/login"} element={<Login />} />
           <Route path={"/join"} element={<Join />} />

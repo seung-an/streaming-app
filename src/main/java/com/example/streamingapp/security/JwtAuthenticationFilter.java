@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         // 1. Request Header 에서 JWT 토큰 추출
         String token = resolveToken((HttpServletRequest) request);
-
         try {
             // 2. validateToken 으로 토큰 유효성 검사
             if (token != null && jwtTokenProvider.validateToken(token)) {
@@ -37,12 +36,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (SecurityException | MalformedJwtException e) {
+            //Invalid JWT Token
             request.setAttribute("exception", ErrorCode.WRONG_TYPE_TOKEN.getCode());
         } catch (ExpiredJwtException e) {
+            //Expired JWT Token
             request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
         } catch (UnsupportedJwtException e) {
+            //Unsupported JWT Token
             request.setAttribute("exception", ErrorCode.UNSUPPORTED_TOKEN.getCode());
         } catch (IllegalArgumentException e) {
+            //JWT claims string is empty.
             request.setAttribute("exception", ErrorCode.WRONG_TYPE_TOKEN.getCode());
         } catch (Exception e) {
             request.setAttribute("exception", ErrorCode.UNKNOWN_ERROR.getCode());

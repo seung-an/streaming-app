@@ -19,15 +19,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             setResponse(response, ErrorCode.UNKNOWN_ERROR);
         }
         //잘못된 타입의 토큰인 경우
-        else if(exception == 1004) {
+        else if(exception == 1002) {
             setResponse(response, ErrorCode.WRONG_TYPE_TOKEN);
         }
         //토큰 만료된 경우
-        else if(exception == 1005) {
+        else if(exception == 1003) {
             setResponse(response, ErrorCode.EXPIRED_TOKEN);
         }
         //지원되지 않는 토큰인 경우
-        else if(exception == 1006) {
+        else if(exception == 1004) {
             setResponse(response, ErrorCode.UNSUPPORTED_TOKEN);
         }
         else {

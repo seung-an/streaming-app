@@ -30,6 +30,9 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "member_name", nullable = false)
+    private String name;
+
     @Column(nullable = false)
     private String email;
 

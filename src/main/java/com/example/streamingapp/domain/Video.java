@@ -1,0 +1,47 @@
+package com.example.streamingapp.domain;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "video")
+public class Video {
+
+    @Id
+    @Column(name = "video_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer videoId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="member_code")
+    private Member member;
+
+    @Column
+    private String title;
+
+    @Column
+    private String description;
+
+    @Column(nullable = false)
+    private String state;
+
+    @Column(name = "created_dt",nullable = false)
+    private String createdDt;
+
+    @Column(nullable = false)
+    private Integer views;
+
+    @Column(nullable = false)
+    private Integer likes;
+
+    @Column(nullable = false)
+    private String url;
+
+
+}

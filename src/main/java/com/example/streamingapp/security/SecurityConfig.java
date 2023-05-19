@@ -44,6 +44,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated(): 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
                 */
                 .and()
+                //exceptionHandling(): 예외처리
+                //.authenticationEntryPoint(메소드): 인증 실패 시 처리할 메소드
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 // addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

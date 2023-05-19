@@ -1,22 +1,27 @@
-import { Dropdown } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "styles/layout/Menu.module.css";
-import { Link } from "react-router-dom";
-
+import { Link, useLocation } from "react-router-dom";
+import MenuItem from "./MenuItem";
 function Menu() {
+  const pathName = useLocation().pathname;
+
+  const menus = [
+    { name: "홈", path: "/" },
+    { name: "내 동영상", path: "/myVideos" },
+    { name: "테스트 메뉴", path: "/test" },
+  ];
   return (
-    <Dropdown.Menu show className={styles.menu} variant={"dark"}>
-      <Dropdown.Item className={styles.eachMenu} as={Link} to={"/"}>
-        홈
-      </Dropdown.Item>
-      <Dropdown.Item className={styles.eachMenu} as={Link} to={"/test"}>
-        시청기록
-      </Dropdown.Item>
-      <Dropdown.Item className={styles.eachMenu}>재생목록</Dropdown.Item>
-      <Dropdown.Item className={styles.eachMenu}>구독</Dropdown.Item>
-      <Dropdown.Item className={styles.eachMenu}>설정</Dropdown.Item>
-      <Dropdown.Item className={styles.eachMenu}>내 채널</Dropdown.Item>
-    </Dropdown.Menu>
+    <div className={styles.menu}>
+      {menus.map((menu, index) => {
+        return (
+          <Link to={menu.path} key={index}>
+            <MenuItem
+              menu={menu}
+              isActive={pathName === menu.path ? true : false}
+            />
+          </Link>
+        );
+      })}
+    </div>
   );
 }
 

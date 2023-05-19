@@ -12,9 +12,10 @@ const authApi = axios.create({
   },
 });
 
-//요청 인터셉터
+//request 인터셉터
 authApi.interceptors.request.use(
   function (config) {
+    //요청 전 처리할 작업
     const token = localStorage.getItem("accessToken");
 
     if (!token) {
@@ -25,15 +26,14 @@ authApi.interceptors.request.use(
       config.headers.authorization = `Bearer ${token}`;
       return config;
     }
-    // Do something before request is sent
   },
   function (error) {
-    // Do something with request error
+    //요청 실패 시 처리할 작업
     return Promise.reject(error);
   }
 );
 
-// 응답 인터셉터
+// response 인터셉터
 authApi.interceptors.response.use(
   function (response) {
     //정상응답 -> 리턴
@@ -43,8 +43,10 @@ authApi.interceptors.response.use(
     //에러
     const config = error.config;
     const status = error.response.status;
+    //Unauthorized
     if (status === 401) {
-      if (error.response.data.code === 1005) {
+      // 서버에서 보내주는 토큰 만료 코드 : 1003
+      if (error.response.data.code === 1003) {
         const originalRequest = config;
         // token refresh 요청
         await axios
@@ -53,11 +55,13 @@ authApi.interceptors.response.use(
             {}
           )
           .then((res) => {
-            // 새로운 토큰 저장
+            //기존 요청에 새로운 토큰으로 변경
             originalRequest.headers.authorization = `Bearer ${res.data.accessToken}`;
+            //로컬 스토리지에 새로운 토큰 저장
             localStorage.setItem("accessToken", res.data.accessToken);
           })
           .catch((error) => {
+            //에러 시 재로그인을 위해 로그인 페이지로 이동
             window.location.href = "/login";
           });
         // 요청 실패했던 요청 새로운 accessToken으로 재요청

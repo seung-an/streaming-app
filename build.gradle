@@ -35,6 +35,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'net.sf.json-lib:json-lib:2.4:jdk15'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    implementation group: 'net.bramp.ffmpeg', name: 'ffmpeg', version: '0.6.2'
 }
 
 tasks.named('test') {

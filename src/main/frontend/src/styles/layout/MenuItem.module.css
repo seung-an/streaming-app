@@ -1,0 +1,20 @@
+.eachMenu{
+    margin: 10px 0px 10px 0px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: white;
+}
+
+.active{
+    background-color: #282828;
+}
+
+
+.eachMenu:hover{
+    color: white;
+    background-color: #282828;
+}

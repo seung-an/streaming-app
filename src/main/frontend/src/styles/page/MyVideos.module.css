@@ -1,0 +1,121 @@
+.videoList{
+    width: 100%;
+}
+
+.uploadBox{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.pageTitle{
+    display: inline;
+    font-size: 20px;
+    width: calc(100% - 100px);
+}
+
+.uploadBtn{
+    width: 100px;
+    height: 40px;
+    border: none;
+    background-color: black;
+    color: white;
+    display: inline;
+    border-radius: 50px;
+}
+
+.uploadBtn:hover{
+    background-color: #282828;
+}
+
+.videoTable{
+    width: 100%;
+    margin-top: 20px;
+}
+
+.videoTable thead{
+    border-bottom: 2px solid #282828;
+    border-top: 2px solid #282828;
+}
+
+.videoTable th{
+    height: 40px;
+    border: none;
+    vertical-align: middle;
+}
+
+.checkBoxCol{
+    text-align: center;
+}
+
+.checkBoxLabel{
+    width: 18px;
+    height: 18px;
+    background-color: #282828;
+    border: 0;
+    border-radius: 1px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    display: inline-block;
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 1px;
+    display: none;
+    margin: 0;
+    position: absolute;
+    cursor: pointer;
+    accent-color: #282828;
+}
+
+.videoRow{
+    border-bottom: 1px solid #282828;
+}
+
+.videoRow:hover td{
+    background-color:rgba(255, 255, 255, 0.2);
+}
+
+.videoBox{
+    display: flex;
+}
+
+.video{
+    width: 200px;
+    height: 112px;
+}
+
+.TitleAndDescription{
+    width: calc(100% - 200px);
+    height: 112px;
+    display: inline-block;
+    padding: 10px;
+}
+
+.videoTitle{
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+    border: none;
+}
+.videoDescription{
+    padding-top: 10px;
+    font-size: 15px;
+    color: #585858;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+    border: none;
+}
