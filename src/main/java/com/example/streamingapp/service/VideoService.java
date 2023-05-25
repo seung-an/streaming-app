@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = false)
@@ -23,7 +21,7 @@ public class VideoService {
     private  final MemberRepository memberRepository;
     private  final VideoRepository videoRepository;
 
-    public void createVideo(String url){
+    public Integer createVideo(String url){
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCustom userDetails = (UserCustom)principal;
@@ -42,11 +40,10 @@ public class VideoService {
                 .createdDt(formatter.format(today))
                 .views(0)
                 .likes(0)
-                .url(url)
+                .videoUrl(url)
                 .build();
 
-        videoRepository.save(videoInfo);
-
+        return videoRepository.save(videoInfo).getVideoId();
     }
 
     public List<Video> getMyVideos(){
@@ -54,6 +51,27 @@ public class VideoService {
         UserCustom userDetails = (UserCustom)principal;
         Integer memberCode = userDetails.getMemberCode();
 
-        return videoRepository.findAllByMember_memberCodeAndStateNot(memberCode, "deleted");
+        return videoRepository.findAllByMember_memberCodeAndStateNotOrderByCreatedDtDesc(memberCode, "deleted");
+    }
+
+    public Optional<Video> getVideoInfo(Integer id){
+        return videoRepository.findById(id);
+    }
+
+    public void updateVideo(Integer id, Map<String, Object> data) throws Exception{
+
+        Video info = videoRepository.findById(id).get();
+
+        info.setTitle((String) data.get("title"));
+        info.setDescription((String) data.get("description"));
+        info.setState((String) data.get("state"));
+
+        String thumbnailUrl = (String) data.get("thumbnailUrl");
+        if(thumbnailUrl != null && thumbnailUrl != "" && !thumbnailUrl.equals(info.getThumbnailUrl())){
+            info.setThumbnailUrl(thumbnailUrl);
+        }
+
+        videoRepository.save(info);
+
     }
 }

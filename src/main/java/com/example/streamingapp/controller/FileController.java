@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -22,12 +23,8 @@ import java.util.*;
 public class FileController {
     private final AmazonS3Client amazonS3Client;
 
-    @Autowired
-    private VideoService videoService;
 
     Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private List<PartETag> partETags = new ArrayList<>();
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -35,8 +32,7 @@ public class FileController {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @PostMapping("/upload")
-    public ResponseEntity fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+    public String fileUpload(MultipartFile file) {
         try {
             // 파일명
             String fileName = file.getOriginalFilename();
@@ -52,29 +48,20 @@ public class FileController {
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucket,convertFileName,file.getInputStream(),metadata);
 
-            return ResponseEntity.ok(fileUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return fileUrl;
+        }  catch (Exception e){
+            return "";
         }
-
     }
 
-    @PostMapping("/video/upload")
-    public ResponseEntity videoUpload(@RequestParam("file") MultipartFile multipartFile) {
+    public String videoUpload(MultipartFile multipartFile){
 
         String uploadKey = "";
         String uploadId = "";
         try {
 
-
-            String fileName = multipartFile.getOriginalFilename();
-//            uploadKey = "video/" + convertFileName(fileName);
             uploadKey = "video/" + UUID.randomUUID();
             String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + uploadKey;
-
 
             long contentLength = multipartFile.getSize(); // 파일 전체 크기
             long partSize = 5 * 1024 * 1024; // 한 부분당 바이트(멀티파트 업로드 최소 크기는 5Mb)
@@ -108,7 +95,6 @@ public class FileController {
                 UploadPartResult uploadResult = amazonS3Client.uploadPart(uploadRequest);
                 partETags.add(uploadResult.getPartETag());
 
-
                 //시작 바이트 갱신
                 filePosition += partSize;
             }
@@ -118,16 +104,36 @@ public class FileController {
                     initResponse.getUploadId(), partETags);
             amazonS3Client.completeMultipartUpload(compRequest);
 
-            videoService.createVideo(fileUrl);
-
-            return ResponseEntity.ok(fileUrl);
+            return fileUrl;
         } catch (Exception e) {
             if (!uploadKey.equals("") && !uploadId.equals("")) {
                 // 멀티파트 요청 중단
                 amazonS3Client.abortMultipartUpload(new AbortMultipartUploadRequest(
                         bucket, uploadKey, uploadId));
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return "";
+        }
+    }
+
+    public String thumbnailUpload(MultipartFile file, String origin) {
+        try {
+
+            if(!origin.equals("")) {
+                String originKey = origin.substring(origin.lastIndexOf("/") + 1);
+                amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, "thumbnail/" + originKey));
+            }
+
+            String uploadKey = "thumbnail/" + UUID.randomUUID();
+            String fileUrl= "https://" + bucket + ".s3." + region + ".amazonaws.com/" + uploadKey;
+
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket, uploadKey, file.getInputStream(), metadata);
+
+            return fileUrl;
+        }  catch (Exception e){
+            return "";
         }
     }
 

@@ -9,11 +9,12 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -22,6 +23,54 @@ import java.util.List;
 public class VideoController {
     @Autowired
     private final VideoService videoService;
+
+    @Autowired
+    private final FileController fileController;
+
+
+    @PostMapping("/upload")
+    public ResponseEntity upload(@RequestParam("file")MultipartFile file){
+        JSONObject resJobj = new JSONObject();
+
+        try {
+            String videoUrl = fileController.videoUpload(file);
+            if (videoUrl.equals("")) {
+                resJobj.put("state", "ERROR");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+
+            Integer videoId = videoService.createVideo(videoUrl);
+            resJobj.put("state", "SUCCESS");
+            resJobj.put("videoId", videoId);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch (Exception e){
+            resJobj.put("state", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/uploadThumbnail")
+    public ResponseEntity uploadThumbnail(@RequestParam("file")MultipartFile file, @RequestParam("origin")String origin){
+        JSONObject resJobj = new JSONObject();
+
+        try {
+            String thumbnailUrl = fileController.thumbnailUpload(file, origin);
+            if (thumbnailUrl.equals("")) {
+                resJobj.put("state", "ERROR");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+            resJobj.put("state", "SUCCESS");
+            resJobj.put("thumbnailUrl", thumbnailUrl);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch (Exception e){
+            resJobj.put("state", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/getMyVideos")
     public ResponseEntity getMyVideos(){
@@ -41,7 +90,8 @@ public class VideoController {
                 videoJobj.put("createdDt", video.getCreatedDt());
                 videoJobj.put("views", video.getViews());
                 videoJobj.put("likes", video.getLikes());
-                videoJobj.put("url", video.getUrl());
+                videoJobj.put("thumbnailUrl", video.getThumbnailUrl());
+                videoJobj.put("videoUrl", video.getVideoUrl());
 
                 data.add(videoJobj);
             }
@@ -50,11 +100,63 @@ public class VideoController {
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
+            resJobj = new JSONObject();
             resJobj.put("status", "ERROR");
             resJobj.put("message", e.getMessage());
             return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @GetMapping("/getVideoInfo/{id}")
+    public ResponseEntity getVideoInfo(@PathVariable String id){
+        JSONObject resJobj = new JSONObject();
+        try{
+            Optional<Video> videoInfo = videoService.getVideoInfo(Integer.parseInt(id));
+            if(!videoInfo.isPresent()){
+                resJobj.put("state", "ERROR");
+                resJobj.put("message", "존재하지 않는 동영상 입니다.");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+
+            JSONObject videoJobj = new JSONObject();
+
+            videoJobj.put("videoId", videoInfo.get().getVideoId());
+            videoJobj.put("title", videoInfo.get().getTitle());
+            videoJobj.put("description", videoInfo.get().getDescription());
+            videoJobj.put("state", videoInfo.get().getState());
+            videoJobj.put("createdDt", videoInfo.get().getCreatedDt());
+            videoJobj.put("views", videoInfo.get().getViews());
+            videoJobj.put("likes", videoInfo.get().getLikes());
+            videoJobj.put("thumbnailUrl", videoInfo.get().getThumbnailUrl());
+            videoJobj.put("videoUrl", videoInfo.get().getVideoUrl());
+
+            resJobj.put("state", "SUCCESS");
+            resJobj.put("data", videoJobj);
+
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("state", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/updateVideo/{id}")
+    public ResponseEntity updateVideo(@PathVariable String id, @RequestBody Map<String, Object> data){
+        JSONObject resJobj = new JSONObject();
+        try{
+            videoService.updateVideo(Integer.parseInt(id), data);
+
+            resJobj.put("state", "SUCCESS");
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e){
+            resJobj.put("state", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

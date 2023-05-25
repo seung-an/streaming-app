@@ -36,8 +36,6 @@ function MyVideos() {
     getMyVideos();
   }, []);
 
-  console.log(type);
-
   return (
     <div className={styles.videoList}>
       <div className={styles.uploadBox}>
@@ -53,7 +51,7 @@ function MyVideos() {
           {type == "upload" ? (
             <UploadVideo update={openUpdateModal} />
           ) : (
-            <UpdateVideo id={videoId} />
+            <UpdateVideo id={videoId} afterSave={closeModal} />
           )}
         </Modal>
       </div>
@@ -95,7 +93,7 @@ function MyVideos() {
         </colgroup>
         <tbody>
           {videos.map((video, index) => (
-            <tr className={styles.videoRow}>
+            <tr className={styles.videoRow} key={video.videoId}>
               <td className={styles.checkBoxCol}>
                 <input type="checkbox" id={`checkBox_video_${index}`} />
                 <label
@@ -103,10 +101,19 @@ function MyVideos() {
                   className={styles.checkBoxLabel}
                 ></label>
               </td>
-              <td className={styles.videoBox}>
-                <video controls className={styles.video}>
-                  <source type="video/mp4" src={video.url} />
-                </video>
+              <td
+                className={styles.videoBox}
+                onClick={() => {
+                  openUpdateModal(video.videoId);
+                }}
+              >
+                {video.thumbnailUrl == null ? (
+                  <video className={styles.video} preload="metadata">
+                    <source type="video/mp4" src={video.videoUrl + "#t=0.5"} />
+                  </video>
+                ) : (
+                  <img className={styles.video} src={video.thumbnailUrl} />
+                )}
                 <div className={styles.TitleAndDescription}>
                   <div className={styles.videoTitle}>{video.title}</div>
                   <div className={styles.videoDescription}>

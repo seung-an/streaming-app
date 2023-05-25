@@ -40,8 +40,11 @@ public class Video {
     @Column(nullable = false)
     private Integer likes;
 
-    @Column(nullable = false)
-    private String url;
+    @Column(name="thumbnail_url", nullable = false)
+    private String thumbnailUrl;
+
+    @Column(name="video_url", nullable = false)
+    private String videoUrl;
 
 
 }

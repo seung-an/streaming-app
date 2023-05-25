@@ -20,9 +20,6 @@ function Modal({ open, close, title, children }) {
             <button onClick={close}>&times;</button>
           </header>
           <main>{children}</main>
-          <footer>
-            <button onClick={close}>닫기</button>
-          </footer>
         </section>
       ) : null}
     </div>

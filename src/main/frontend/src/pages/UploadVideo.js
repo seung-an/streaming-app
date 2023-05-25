@@ -17,12 +17,11 @@ function UploadVideo({ update }) {
     form.append("file", selectFiles[0]);
 
     authApi
-      .post("/api/file/video/upload", form, {
+      .post("/api/video/upload", form, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        console.log("upload completed : " + response.data);
-        update(response.data);
+        update(response.data.videoId);
       });
   };
 
