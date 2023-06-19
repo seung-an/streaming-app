@@ -51,6 +51,10 @@ public class MemberService {
         member.setRefreshToken(tokenInfo.getRefreshToken());
         memberRepository.save(member);
 
+        tokenInfo.setMemberCode(member.getMemberCode());
+        tokenInfo.setMemberName(member.getName());
+        tokenInfo.setMemberImage(member.getImageUrl());
+
         return tokenInfo;
     }
 
@@ -85,7 +89,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Integer join(Map<String, Object> data) throws Exception{
+    public Integer join(Map<String, Object> data, String imageUrl) throws Exception{
 
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         byte[] bytes = new byte[16];
@@ -101,6 +105,7 @@ public class MemberService {
                 .password(getSecurePassword((String)data.get("password"), salt))
                 .name((String)data.get("name"))
                 .email((String)data.get("email"))
+                .imageUrl(imageUrl)
                 .salt(salt)
                 .roles(roles)
                 .build();

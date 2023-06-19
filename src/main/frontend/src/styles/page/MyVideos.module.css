@@ -7,6 +7,10 @@
     height: 50px;
     display: flex;
     align-items: center;
+    position: sticky;
+    top: -21px;
+    background-color: black;
+    z-index:10;
 }
 
 .pageTitle{
@@ -37,12 +41,25 @@
 .videoTable thead{
     border-bottom: 2px solid #282828;
     border-top: 2px solid #282828;
+    position: sticky;
+    top: 28px;
+    background-color: black;
+    z-index:9;
+}
+
+.videoTable tbody{
+    overflow-y: scroll;
 }
 
 .videoTable th{
     height: 40px;
     border: none;
     vertical-align: middle;
+}
+
+.videoTable td{
+    height: 112px;
+    border: none;
 }
 
 .checkBoxCol{
@@ -84,6 +101,7 @@ input[type="checkbox"] {
 
 .videoBox{
     display: flex;
+    cursor: pointer;
 }
 
 .video{
@@ -106,6 +124,8 @@ input[type="checkbox"] {
     text-overflow: ellipsis;
     white-space: normal;
     border: none;
+    word-break: break-all;
+    word-wrap: break-word;
 }
 .videoDescription{
     padding-top: 10px;
@@ -118,4 +138,6 @@ input[type="checkbox"] {
     text-overflow: ellipsis;
     white-space: normal;
     border: none;
+    word-break: break-all;
+    word-wrap: break-word;
 }

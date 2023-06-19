@@ -31,3 +31,7 @@ input:focus{
 input::placeholder {
     color: #686868;
 }
+
+video:focus{
+    outline: none;
+}

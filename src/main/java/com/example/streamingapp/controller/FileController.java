@@ -8,14 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URI;
 import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/file")
@@ -31,6 +37,9 @@ public class FileController {
 
     @Value("${cloud.aws.region.static}")
     private String region;
+
+    @Value("${file.path}")
+    private String tempPath;
 
     public String fileUpload(MultipartFile file) {
         try {
@@ -137,6 +146,43 @@ public class FileController {
         }
     }
 
+    public String initialThumbnail(String videoUrl) throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        String uploadKey = "thumbnail/" + uuid;
+//            String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + uploadKey;
+
+        Runtime run = Runtime.getRuntime();
+        String command = "ffmpeg -i " + videoUrl + " -ss 00:00:01 -vcodec png -vframes 1 -vf scale=320:180 " + tempPath + "/" + uuid + ".png"; // 동영상 1초에서 Thumbnail 추출
+        System.out.println(command);
+
+        Process p = run.exec(command);
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+        String line = null;
+
+        while((line = br.readLine()) != null){
+            System.out.println(line);
+        }
+
+        File file = new File(tempPath + "/" + uuid + ".png");
+        InputStream thumbnailStream = new FileInputStream(file);
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("image/png");
+        metadata.setContentLength(file.length());
+        amazonS3Client.putObject(bucket, uploadKey, thumbnailStream, metadata);
+
+        String fileUrl = amazonS3Client.getUrl(bucket, uploadKey).toString();
+
+        String deleteCommand = "rm " + tempPath + "/" + uuid + ".png";
+        System.out.println(deleteCommand);
+        run.exec(deleteCommand);
+
+        return fileUrl;
+    }
+
     @GetMapping("/multiFileUploadAllStop")
     public ResponseEntity AllStop() {
 
@@ -155,10 +201,68 @@ public class FileController {
         return ResponseEntity.ok("ok");
     }
 
+    public String createBasicChannelImage(String userName){
+        BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = img.createGraphics();    // Graphics2D를 얻어와 그림을 그린다
+
+        Color[] colorList = {Color.magenta, Color.blue, Color.cyan, Color.green, Color.yellow,
+                Color.red, Color.orange, Color.pink};
+
+        Integer colorIdx = (int)(Math.random() * 7);
+
+        graphics.setColor(colorList[colorIdx]);                       // 색상을 지정한다(파란색)
+        graphics.fillRect(0,0,200, 200);              // 사각형을 하나 그린다
+
+        graphics.setFont(new Font("나눔고딕", Font.BOLD, 80));
+        graphics.setColor(Color.white);
+
+        FontMetrics metrics = graphics.getFontMetrics(new Font("나눔고딕", Font.BOLD, 80));
+
+        String text = userName;
+        int x = 0;
+        int y = 0;
+
+        if(userName.length() > 1){
+            text = userName.substring(0, 2);
+        }
+
+        x = (200 - metrics.stringWidth(text)) / 2;
+        y = ((200 - metrics.getHeight()) / 2) + metrics.getAscent();
+        graphics.drawString(text, x, y); //설정한 위치에 따른 텍스트를 그림
+
+        try{
+
+            UUID uuid = UUID.randomUUID();
+
+            String uploadKey = "channel/" + uuid;
+
+            File imgfile = new File(tempPath + "/" + uuid + ".png");        // 파일의 이름을 설정한다
+            ImageIO.write(img, "png", imgfile);                     // write메소드를 이용해 파일을 만든다
+
+            InputStream imgStream = new FileInputStream(imgfile);
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("image/png");
+            metadata.setContentLength(imgfile.length());
+            amazonS3Client.putObject(bucket, uploadKey, imgStream, metadata);
+
+            String fileUrl = amazonS3Client.getUrl(bucket, uploadKey).toString();
+
+            imgfile.delete();
+
+            return fileUrl;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return "";
+        }
+    }
+
 
 
     private String convertFileName(String originFileName){
         UUID uuid = UUID.randomUUID();
         return uuid + "_" + originFileName;
     }
+
 }

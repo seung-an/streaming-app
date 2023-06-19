@@ -40,14 +40,23 @@ function Login() {
     api
       .post("/member/login", { memberId: inputID, password: inputPW })
       .then((response) => {
-        localStorage.setItem("accessToken", response.data.accessToken);
         changeErrorMsg("");
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("memberCode", response.data.memberCode);
+        localStorage.setItem("memberName", response.data.memberName);
+        localStorage.setItem("memberImage", response.data.memberImage);
         localStorage.setItem("isLogin", "T");
         navigate("/");
       })
       .catch((error) => {
         changeErrorMsg("아이디 또는 비밀번호를 잘못 입력 하였습니다.");
       });
+  };
+
+  const activeEnter = (e) => {
+    if (e.key === "Enter") {
+      checkLogin();
+    }
   };
 
   return (
@@ -61,6 +70,7 @@ function Login() {
             className={styles.loginInput}
             placeholder={"아이디"}
             onChange={changeID}
+            onKeyPress={activeEnter}
           />
         </div>
         <div className={styles.elmBox}>
@@ -70,6 +80,7 @@ function Login() {
             className={styles.loginInput}
             placeholder={"비밀번호"}
             onChange={changePW}
+            onKeyPress={activeEnter}
           />
         </div>
         <div className={styles.elmBox}>

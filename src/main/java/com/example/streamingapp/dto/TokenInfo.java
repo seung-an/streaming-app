@@ -12,4 +12,7 @@ public class TokenInfo {
     private String grantType;
     private String accessToken;
     private String refreshToken;
+    private Integer memberCode;
+    private String memberName;
+    private String memberImage;
 }

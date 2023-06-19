@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
     List<Video> findAllByMember_memberCodeAndStateNotOrderByCreatedDtDesc(Integer memberCode, String state);
+    List<Video> findAllByStateOrderByCreatedDtDesc(String state);
+
+    List<Video> findAllByStateAndTitleContainingIgnoreCaseOrderByCreatedDtDesc(String state, String query);
+
 }

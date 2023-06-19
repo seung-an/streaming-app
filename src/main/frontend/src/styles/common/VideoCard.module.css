@@ -1,6 +1,7 @@
 .video{
     background-color: black;
     color: white;
+    cursor: pointer;
 }
 
 .video:hover{
@@ -9,7 +10,7 @@
 }
 
 .videoImg{
-
+    border-radius: 10px;
 }
 
 .videoBody{
@@ -29,7 +30,7 @@
 }
 
 .videoInfo{
-    width: calc(100% - 70px);
+    width: calc(100% - 60px);
     display: inline-block;
     height: 50px;
 }
@@ -42,6 +43,8 @@
     text-overflow: ellipsis;
     white-space: normal;
     border: none;
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 .channelName a, .views{

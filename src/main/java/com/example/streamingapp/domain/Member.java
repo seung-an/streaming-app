@@ -36,6 +36,9 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private String email;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
+
     @Column(nullable = false)
     private String salt;
 

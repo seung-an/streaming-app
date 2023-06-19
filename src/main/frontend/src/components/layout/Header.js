@@ -1,11 +1,17 @@
 import styles from "styles/layout/Header.module.css";
 import searchIcon from "icons/icon_search.png";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import cookie from "react-cookies";
 
 function Header() {
   const isLogin = localStorage.getItem("isLogin");
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState();
+
+  const changeSearchQuery = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   useEffect(() => {}, []);
 
@@ -23,8 +29,14 @@ function Header() {
         </Link>
       </div>
       <div className={styles.searchArea}>
-        <form className={styles.searchBox}>
-          <input type="text" className={styles.searchInput} />
+        <form className={styles.searchBox} action={"/search"} method={"get"}>
+          <input
+            value={searchQuery}
+            type="text"
+            name={"searchQuery"}
+            className={styles.searchInput}
+            onChange={changeSearchQuery}
+          />
           <button type="submit" className={styles.searchBtn}>
             <img src={searchIcon} />
           </button>

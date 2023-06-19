@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,13 @@ import java.util.Map;
 @RequestMapping("/member")
 public class MemberController {
 
+    @Value("${public.domain}")
+    private String domain;
     @Autowired
     private final MemberService memberService;
+
+    @Autowired
+    private final FileController fileController;
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody MemberLoginRequestDto memberLoginRequestDto, HttpServletResponse response) {
         JSONObject resJobj = new JSONObject();
@@ -40,6 +46,9 @@ public class MemberController {
             resJobj.put("status", "ERROR");
             resJobj.put("grantType", tokenInfo.getGrantType());
             resJobj.put("accessToken", tokenInfo.getAccessToken());
+            resJobj.put("memberCode", tokenInfo.getMemberCode());
+            resJobj.put("memberName", tokenInfo.getMemberName());
+            resJobj.put("memberImage", tokenInfo.getMemberImage());
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
@@ -75,7 +84,9 @@ public class MemberController {
 
         JSONObject resJobj = new JSONObject();
         try {
-            Integer memberCode = memberService.join(data);
+            String imageUrl = fileController.createBasicChannelImage((String) data.get("name"));
+
+            Integer memberCode = memberService.join(data, imageUrl);
             resJobj.put("status", "SUCCESS");
             return new ResponseEntity(resJobj, HttpStatus.OK);
         } catch (Exception e) {
@@ -88,7 +99,7 @@ public class MemberController {
 
     public void createCookie(String name, String value, HttpServletResponse response) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setDomain("localhost");
+        cookie.setDomain(domain);
 
 //        cookie.setSecure(true);
         cookie.setHttpOnly(true);

@@ -3,12 +3,17 @@ import { useEffect, useState } from "react";
 import Modal from "components/common/Modal";
 import UploadVideo from "pages/UploadVideo";
 import UpdateVideo from "pages/UpdateVideo";
+import Pagination from "components/common/Pagination";
 import { authApi } from "../api/api";
+import * as common from "common.js";
+
 function MyVideos() {
   const [state, setState] = useState(false);
   const [type, setType] = useState("upload");
   const [videoId, setVideoId] = useState("");
   const [videos, setVideos] = useState([]);
+  const [page, setPage] = useState(1);
+  const offset = (page - 1) * 10;
 
   const openModal = () => {
     setState(true);
@@ -35,6 +40,14 @@ function MyVideos() {
   useEffect(() => {
     getMyVideos();
   }, []);
+
+  const selectAll = (e) => {
+    const checkboxes = document.getElementsByName("video");
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+  };
 
   return (
     <div className={styles.videoList}>
@@ -68,7 +81,7 @@ function MyVideos() {
         <thead>
           <tr>
             <th className={styles.checkBoxCol}>
-              <input type="checkbox" id="allCheck" />
+              <input type="checkbox" id="allCheck" onClick={selectAll} />
               <label
                 htmlFor="allCheck"
                 className={styles.checkBoxLabel}
@@ -82,20 +95,15 @@ function MyVideos() {
             <th>좋아요</th>
           </tr>
         </thead>
-        <colgroup>
-          <col width="10%" />
-          <col width="40%" />
-          <col width="10%" />
-          <col width="10%" />
-          <col width="10%" />
-          <col width="10%" />
-          <col width="10%" />
-        </colgroup>
         <tbody>
-          {videos.map((video, index) => (
+          {videos.slice(offset, offset + 10).map((video, index) => (
             <tr className={styles.videoRow} key={video.videoId}>
               <td className={styles.checkBoxCol}>
-                <input type="checkbox" id={`checkBox_video_${index}`} />
+                <input
+                  type="checkbox"
+                  id={`checkBox_video_${index}`}
+                  name={"video"}
+                />
                 <label
                   htmlFor={`checkBox_video_${index}`}
                   className={styles.checkBoxLabel}
@@ -107,13 +115,7 @@ function MyVideos() {
                   openUpdateModal(video.videoId);
                 }}
               >
-                {video.thumbnailUrl == null ? (
-                  <video className={styles.video} preload="metadata">
-                    <source type="video/mp4" src={video.videoUrl + "#t=0.5"} />
-                  </video>
-                ) : (
-                  <img className={styles.video} src={video.thumbnailUrl} />
-                )}
+                <img className={styles.video} src={video.thumbnailUrl} />
                 <div className={styles.TitleAndDescription}>
                   <div className={styles.videoTitle}>{video.title}</div>
                   <div className={styles.videoDescription}>
@@ -121,7 +123,7 @@ function MyVideos() {
                   </div>
                 </div>
               </td>
-              <td>{video.state}</td>
+              <td>{common.getVideoState(video.state)}</td>
               <td>{video.createdDt}</td>
               <td>{video.views}</td>
               <td></td>
@@ -130,6 +132,14 @@ function MyVideos() {
           ))}
         </tbody>
       </table>
+      <footer>
+        <Pagination
+          total={videos.length}
+          limit={10}
+          page={page}
+          setPage={setPage}
+        />
+      </footer>
     </div>
   );
 }

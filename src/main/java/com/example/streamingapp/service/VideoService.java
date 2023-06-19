@@ -21,7 +21,7 @@ public class VideoService {
     private  final MemberRepository memberRepository;
     private  final VideoRepository videoRepository;
 
-    public Integer createVideo(String url){
+    public Integer createVideo(String videoUrl, String thumbnailUrl){
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCustom userDetails = (UserCustom)principal;
@@ -40,7 +40,8 @@ public class VideoService {
                 .createdDt(formatter.format(today))
                 .views(0)
                 .likes(0)
-                .videoUrl(url)
+                .thumbnailUrl(thumbnailUrl)
+                .videoUrl(videoUrl)
                 .build();
 
         return videoRepository.save(videoInfo).getVideoId();
@@ -52,6 +53,17 @@ public class VideoService {
         Integer memberCode = userDetails.getMemberCode();
 
         return videoRepository.findAllByMember_memberCodeAndStateNotOrderByCreatedDtDesc(memberCode, "deleted");
+    }
+
+    public List<Video> getVideos(String searchQuery){
+
+        if(searchQuery == null) {
+
+            return videoRepository.findAllByStateOrderByCreatedDtDesc("public");
+        }
+        else{
+            return videoRepository.findAllByStateAndTitleContainingIgnoreCaseOrderByCreatedDtDesc("public", searchQuery);
+        }
     }
 
     public Optional<Video> getVideoInfo(Integer id){
@@ -73,5 +85,11 @@ public class VideoService {
 
         videoRepository.save(info);
 
+    }
+
+    public void increaseViews(Integer id){
+        Video info = videoRepository.findById(id).get();
+        info.setViews(info.getViews() + 1);
+        videoRepository.save(info);
     }
 }
