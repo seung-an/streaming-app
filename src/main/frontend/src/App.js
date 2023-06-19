@@ -8,6 +8,7 @@ import TestPage from "./pages/TestPage";
 import MyVideos from "./pages/MyVideos";
 import WatchVideo from "./pages/WatchVideo";
 import SearchVideo from "./pages/SearchVideo";
+import History from "./pages/History";
 
 function App() {
   useEffect(() => {}, []);
@@ -22,6 +23,7 @@ function App() {
             <Route path={"/myVideos"} element={<MyVideos />} />
             <Route path={"/watch/:id"} element={<WatchVideo />} />
             <Route path={"/search"} element={<SearchVideo />} />
+            <Route path={"/history"} element={<History />} />
           </Route>
           <Route path={"/login"} element={<Login />} />
           <Route path={"/join"} element={<Join />} />

@@ -73,4 +73,20 @@ public class CommentController {
             return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/deleteComment/{id}")
+    public ResponseEntity addComment(@PathVariable String id){
+        JSONObject resJobj = new JSONObject();
+        try{
+            commentService.deleteComment(Integer.parseInt(id));
+
+            resJobj.put("status", "SUCCESS");
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e){
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

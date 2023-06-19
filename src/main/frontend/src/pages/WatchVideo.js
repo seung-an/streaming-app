@@ -4,11 +4,14 @@ import { authApi } from "../api/api";
 import CustomVideo from "../components/common/CustomVideo";
 import styles from "styles/page/WatchVideo.module.css";
 import * as common from "../common";
-import { getConvertTime } from "../common";
 import VariableText from "../components/common/VariableText";
+import deleteIcon from "../icons/icon-delete.png";
+import DeleteIcon from "../components/common/DeleteIcon";
 
 function WatchVideo() {
   const { id } = useParams();
+  const memberCode = Number(localStorage.getItem("memberCode"));
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [state, setState] = useState("");
@@ -20,10 +23,6 @@ function WatchVideo() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const newCommentRef = useRef();
-
-  // const [more, setMore] = useState(false);
-  // const [isOverflow, setIsOverflow] = useState(null);
-  // const descriptionRef = useRef();
 
   const getInfo = async () => {
     await authApi.get("/api/video/getVideoInfo/" + id).then((response) => {
@@ -48,30 +47,6 @@ function WatchVideo() {
     });
   };
 
-  // const changeMore = () => {
-  //   setMore((curr) => !curr);
-  // };
-
-  useEffect(() => {
-    getInfo().then(() => {
-      increaseViews().then(() => {
-        getComments().then();
-      });
-    });
-  }, []);
-
-  // const mounted = useRef(false);
-  // useEffect(() => {
-  //   if (!mounted.current) {
-  //     mounted.current = true;
-  //   } else if (isOverflow == null) {
-  //     setIsOverflow(
-  //       descriptionRef.current.offsetHeight <
-  //         descriptionRef.current.scrollHeight
-  //     );
-  //   }
-  // });
-
   const changeNewComment = (e) => {
     setNewComment(e.target.value);
     newCommentRef.current.style.height = "auto";
@@ -84,9 +59,31 @@ function WatchVideo() {
       .post("/api/comment/addComment/" + id, { content: newComment })
       .then((response) => {
         setNewComment("");
+        newCommentRef.current.style.height = "auto";
         getComments().then();
       });
   };
+
+  const deleteComment = (e, commentId) => {
+    e.stopPropagation();
+    authApi.get("/api/comment/deleteComment/" + commentId).then((response) => {
+      getComments().then();
+    });
+  };
+
+  const saveHistory = async () => {
+    await authApi.get("/api/history/saveHistory/" + id).then((response) => {});
+  };
+
+  useEffect(() => {
+    getInfo().then(() => {
+      increaseViews().then(() => {
+        getComments().then(() => {
+          saveHistory().then();
+        });
+      });
+    });
+  }, []);
 
   return (
     <div>
@@ -130,6 +127,16 @@ function WatchVideo() {
               </div>
               <VariableText text={comment.content} limit={"2"} />
             </div>
+            {comment.memberCode === memberCode ? (
+              <div>
+                <DeleteIcon
+                  id={comment.commentId}
+                  delFun={deleteComment}
+                  width={"20"}
+                  height={"20"}
+                />
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

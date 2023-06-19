@@ -104,6 +104,7 @@
 }
 
 .commentInfo{
+    width: 90%;
 }
 
 .commentMember{
@@ -139,4 +140,16 @@
     white-space: pre-wrap;
     word-break: break-all;
     word-wrap: break-word;
+}
+
+.deleteBtn{
+    border: none;
+    border-radius: 10px;
+    width: 20px;
+    background-color: black;
+    cursor: pointer;
+}
+
+.deleteBtn:hover{
+    background-color: #282828;
 }

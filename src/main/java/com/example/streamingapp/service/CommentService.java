@@ -49,4 +49,8 @@ public class CommentService {
     public List<Comment> getComments(Integer videoId){
         return commentRepository.findAllByVideoIdOrderByCreatedDtAsc(videoId);
     }
+
+    public void deleteComment(Integer commentId){
+        commentRepository.deleteById(commentId);
+    }
 }
