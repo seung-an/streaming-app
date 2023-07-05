@@ -1,8 +1,11 @@
 package com.example.streamingapp.controller;
 
+import com.example.streamingapp.domain.Member;
+import com.example.streamingapp.domain.Video;
 import com.example.streamingapp.dto.MemberLoginRequestDto;
 import com.example.streamingapp.dto.TokenInfo;
 import com.example.streamingapp.service.MemberService;
+import com.example.streamingapp.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,17 +24,21 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 public class MemberController {
 
     @Value("${public.domain}")
     private String domain;
     @Autowired
     private final MemberService memberService;
+
+    @Autowired
+    private final SubscribeService subscribeService;
 
     @Autowired
     private final FileController fileController;
@@ -94,6 +102,153 @@ public class MemberController {
             resJobj.put("status", "ERROR");
             resJobj.put("error_massage", e.getMessage());
             return new ResponseEntity(resJobj.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/updateChannelInfo")
+    public ResponseEntity updateChannelInfo(@RequestBody Map<String, Object> data) {
+
+        JSONObject resJobj = new JSONObject();
+        try {
+            Member info = memberService.updateMember(data);
+
+            JSONObject infoJobj = new JSONObject();
+            infoJobj.put("channelCode", info.getMemberCode());
+            infoJobj.put("channelName", info.getName());
+            infoJobj.put("channelImage", info.getImageUrl());
+            infoJobj.put("channelHandle", info.getHandle());
+
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("data", infoJobj);
+            return new ResponseEntity(resJobj.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+
+            resJobj.put("status", "ERROR");
+            resJobj.put("error_massage", e.getMessage());
+            return new ResponseEntity(resJobj.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/uploadChannelImage")
+    public ResponseEntity uploadChannelImage(@RequestParam("file") MultipartFile file, @RequestParam("origin")String origin){
+        JSONObject resJobj = new JSONObject();
+
+        try {
+            String ImageUrl = fileController.channelImageUpload(file, origin);
+            if (ImageUrl.equals("")) {
+                resJobj.put("status", "ERROR");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+            resJobj.put("channelImageUrl", ImageUrl);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch (Exception e){
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getChannelInfoByCode/{code}")
+    public ResponseEntity getChannelInfoByCode(@PathVariable String code){
+        JSONObject resJobj = new JSONObject();
+        try{
+            Optional<Member> info = memberService.getMemberInfoByCode(Integer.parseInt(code));
+            if(!info.isPresent()){
+                resJobj.put("status", "ERROR");
+                resJobj.put("message", "존재하지 않는 채널 입니다.");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+
+            JSONObject infoJobj = new JSONObject();
+            infoJobj.put("channelCode", info.get().getMemberCode());
+            infoJobj.put("channelName", info.get().getName());
+            infoJobj.put("channelImage", info.get().getImageUrl());
+            infoJobj.put("channelHandle", info.get().getHandle());
+
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("data", infoJobj);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getChannelInfoByHandle/{handle}")
+    public ResponseEntity getChannelInfoByHandle(@PathVariable String handle){
+        JSONObject resJobj = new JSONObject();
+        try{
+            Optional<Member> info = memberService.getMemberInfoByHandle(handle);
+            if(!info.isPresent()){
+                resJobj.put("status", "ERROR");
+                resJobj.put("message", "존재하지 않는 채널 입니다.");
+                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+            }
+
+            JSONObject infoJobj = new JSONObject();
+            infoJobj.put("channelCode", info.get().getMemberCode());
+            infoJobj.put("channelName", info.get().getName());
+            infoJobj.put("channelImage", info.get().getImageUrl());
+            infoJobj.put("channelSubscribeCount", subscribeService.getSubscribeCount(info.get().getMemberCode()));
+            infoJobj.put("isSubscribe", subscribeService.checkSubscribe(info.get().getMemberCode()));
+
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("data", infoJobj);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/checkName")
+    public ResponseEntity checkName(@RequestParam String name){
+        JSONObject resJobj = new JSONObject();
+        try{
+            if(memberService.checkName(name)){
+                resJobj.put("status", "ERROR");
+                resJobj.put("message", "사용중인 채널명입니다.");
+                return new ResponseEntity(resJobj, HttpStatus.OK);
+            }
+            else{
+                resJobj.put("status", "SUCCESS");
+                return new ResponseEntity(resJobj, HttpStatus.OK);
+            }
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/checkHandle")
+    public ResponseEntity checkHandle(@RequestParam String handle){
+        JSONObject resJobj = new JSONObject();
+        try{
+            if(memberService.checkHandle(handle)){
+                resJobj.put("status", "ERROR");
+                resJobj.put("message", "사용중인 핸들입니다.");
+                return new ResponseEntity(resJobj, HttpStatus.OK);
+            }
+            else{
+                resJobj.put("status", "SUCCESS");
+                return new ResponseEntity(resJobj, HttpStatus.OK);
+            }
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

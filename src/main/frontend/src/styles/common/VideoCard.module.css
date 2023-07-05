@@ -1,4 +1,4 @@
-.video{
+.video, .noHvVideo{
     background-color: black;
     color: white;
     cursor: pointer;
@@ -35,6 +35,12 @@
     height: 50px;
 }
 
+.noChVideoInfo{
+    width: 100%;
+    display: inline-block;
+    height: 50px;
+}
+
 .videoTitle{
     overflow: hidden;
     -webkit-line-clamp: 2;
@@ -47,11 +53,18 @@
     word-wrap: break-word;
 }
 
-.channelName a, .views{
+.channelName{
+    color: gray;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.channelName:hover{
+    color: lightgray;
+}
+
+.viewsAndDt{
     color: gray;
     font-size: 12px;
 }
 
-.channelName a:hover{
-    color: lightgray;
-}

@@ -10,7 +10,10 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findByMemberId(String id);
-
+    Optional<Member> findByName(String name);
+    Optional<Member> findByHandle(String handle);
     @Query(value = "select salt from member where member_id = :id", nativeQuery = true)
     String getSalt(@Param("id") String id);
+
+
 }

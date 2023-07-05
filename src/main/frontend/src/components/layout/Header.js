@@ -1,5 +1,6 @@
 import styles from "styles/layout/Header.module.css";
-import searchIcon from "icons/icon_search.png";
+import searchIcon from "icons/icon-search.png";
+import logoutIcon from "icons/icon-logout.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import cookie from "react-cookies";
@@ -36,6 +37,7 @@ function Header() {
             name={"searchQuery"}
             className={styles.searchInput}
             onChange={changeSearchQuery}
+            spellcheck="false"
           />
           <button type="submit" className={styles.searchBtn}>
             <img src={searchIcon} />
@@ -45,7 +47,11 @@ function Header() {
       <div className={styles.accountArea}>
         <Link to={"/login"}>
           {isLogin === "T" ? (
-            <div onClick={logout}>로그아웃</div>
+            <img
+              className={styles.logoutIcon}
+              onClick={logout}
+              src={logoutIcon}
+            />
           ) : (
             <div>로그인</div>
           )}

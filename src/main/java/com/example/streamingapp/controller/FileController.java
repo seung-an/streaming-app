@@ -258,6 +258,27 @@ public class FileController {
         }
     }
 
+    public String channelImageUpload(MultipartFile file, String origin) {
+        try {
+            if(!origin.equals("")) {
+                String originKey = origin.substring(origin.lastIndexOf("/") + 1);
+                amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, "channel/" + originKey));
+            }
+
+            String uploadKey = "channel/" + UUID.randomUUID();
+            String fileUrl= "https://" + bucket + ".s3." + region + ".amazonaws.com/" + uploadKey;
+
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket, uploadKey, file.getInputStream(), metadata);
+
+            return fileUrl;
+        }  catch (Exception e){
+            return "";
+        }
+    }
+
 
 
     private String convertFileName(String originFileName){

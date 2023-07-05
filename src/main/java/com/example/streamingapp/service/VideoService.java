@@ -66,6 +66,10 @@ public class VideoService {
         }
     }
 
+    public List<Video> getChannelVideos(String handle){
+        return videoRepository.findAllByMember_HandleAndStateOrderByCreatedDtDesc(handle, "public");
+    }
+
     public Optional<Video> getVideoInfo(Integer id){
         return videoRepository.findById(id);
     }

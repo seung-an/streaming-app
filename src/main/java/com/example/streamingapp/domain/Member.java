@@ -40,6 +40,9 @@ public class Member implements UserDetails {
     private String imageUrl;
 
     @Column(nullable = false)
+    private String handle;
+
+    @Column(nullable = false)
     private String salt;
 
     @Column(name = "refresh_token")

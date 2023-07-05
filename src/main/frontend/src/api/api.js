@@ -51,7 +51,7 @@ authApi.interceptors.response.use(
         // token refresh 요청
         await axios
           .post(
-            `/member/refreshToken`, // token refresh api
+            `/api/member/refreshToken`, // token refresh api
             {}
           )
           .then((res) => {

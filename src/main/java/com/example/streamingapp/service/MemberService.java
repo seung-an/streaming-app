@@ -2,12 +2,14 @@ package com.example.streamingapp.service;
 
 import com.example.streamingapp.domain.Member;
 import com.example.streamingapp.dto.TokenInfo;
+import com.example.streamingapp.dto.UserCustom;
 import com.example.streamingapp.repository.MemberRepository;
 import com.example.streamingapp.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +21,7 @@ import java.security.SecureRandom;
 import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -106,6 +108,7 @@ public class MemberService {
                 .name((String)data.get("name"))
                 .email((String)data.get("email"))
                 .imageUrl(imageUrl)
+                .handle("CH-" + UUID.randomUUID())
                 .salt(salt)
                 .roles(roles)
                 .build();
@@ -115,6 +118,58 @@ public class MemberService {
         return member.getMemberCode();
     }
 
+    public Optional<Member> getMemberInfoByCode(Integer code){
+        return memberRepository.findById(code);
+    }
+
+    public Optional<Member> getMemberInfoByHandle(String handle){
+        return memberRepository.findByHandle(handle);
+    }
+
+    public Boolean checkName(String name){
+        Integer memberCode = getMyCode();
+
+        Optional<Member> info = memberRepository.findByName(name);
+
+        if(info.isPresent() && info.get().getMemberCode() != memberCode){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public Boolean checkHandle(String handle){
+        Integer memberCode = getMyCode();
+
+        Optional<Member> info = memberRepository.findByHandle(handle);
+
+        if(info.isPresent() && info.get().getMemberCode() != memberCode){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public Member updateMember(Map<String, Object> data){
+
+        Integer memberCode = getMyCode();
+        Member info = memberRepository.findById(memberCode).get();
+
+        info.setName((String) data.get("name"));
+        info.setHandle((String) data.get("handle"));
+        info.setImageUrl((String) data.get("imageUrl"));
+
+        return memberRepository.save(info);
+    }
+
+
+    private Integer getMyCode(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserCustom userDetails = (UserCustom)principal;
+        return userDetails.getMemberCode();
+    }
 
     public String getSecurePassword(String password, String salt) throws NoSuchAlgorithmException {
 

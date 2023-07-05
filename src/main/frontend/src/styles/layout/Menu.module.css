@@ -11,3 +11,13 @@
     display: block;
 }
 
+.subscribeBox{
+    border-bottom: 1px solid #585858;
+    border-top: 1px solid #585858;
+}
+
+.sub{
+    font-size: 20px;
+    padding: 10px;
+}
+

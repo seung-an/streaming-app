@@ -33,7 +33,7 @@ public class SecurityConfig {
 
                 // 정적자원에 대해서 요청을 허가한다는 설정
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-
+                .antMatchers("/api/member/login", "/api/member/refreshToken","/api/member/join").permitAll()
                 .antMatchers("/api/**").authenticated()
 
                 /*

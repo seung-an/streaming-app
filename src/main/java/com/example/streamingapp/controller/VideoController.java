@@ -127,6 +127,47 @@ public class VideoController {
                 JSONObject videoJobj = new JSONObject();
 
                 videoJobj.put("videoId", video.getVideoId());
+                videoJobj.put("channelCode", video.getMember().getMemberCode());
+                videoJobj.put("channelHandle", video.getMember().getHandle());
+                videoJobj.put("channelName", video.getMember().getName());
+                videoJobj.put("channelImage", video.getMember().getImageUrl());
+                videoJobj.put("title", video.getTitle());
+                videoJobj.put("description", video.getDescription());
+                videoJobj.put("state", video.getState());
+                videoJobj.put("createdDt", video.getCreatedDt());
+                videoJobj.put("views", video.getViews());
+                videoJobj.put("likes", video.getLikes());
+                videoJobj.put("thumbnailUrl", video.getThumbnailUrl());
+                videoJobj.put("videoUrl", video.getVideoUrl());
+
+                data.add(videoJobj);
+            }
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("data", data);
+
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch (Exception e){
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getChannelVideos/{handle}")
+    public ResponseEntity getChannelVideos(@PathVariable String handle){
+        JSONObject resJobj = new JSONObject();
+        try{
+            List<Video> videoList = videoService.getChannelVideos(handle);
+
+            JSONArray data = new JSONArray();
+            for (Video video: videoList) {
+                JSONObject videoJobj = new JSONObject();
+
+                videoJobj.put("videoId", video.getVideoId());
+                videoJobj.put("channelCode", video.getMember().getMemberCode());
+                videoJobj.put("channelHandle", video.getMember().getHandle());
                 videoJobj.put("channelName", video.getMember().getName());
                 videoJobj.put("channelImage", video.getMember().getImageUrl());
                 videoJobj.put("title", video.getTitle());
@@ -167,6 +208,8 @@ public class VideoController {
             JSONObject videoJobj = new JSONObject();
 
             videoJobj.put("videoId", videoInfo.get().getVideoId());
+            videoJobj.put("channelCode", videoInfo.get().getMember().getMemberCode());
+            videoJobj.put("channelHandle", videoInfo.get().getMember().getHandle());
             videoJobj.put("channelName", videoInfo.get().getMember().getName());
             videoJobj.put("channelImage", videoInfo.get().getMember().getImageUrl());
             videoJobj.put("title", videoInfo.get().getTitle());

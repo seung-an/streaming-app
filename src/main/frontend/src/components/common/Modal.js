@@ -1,7 +1,7 @@
 import styles from "styles/common/Modal.module.css";
 import { useRef } from "react";
 
-function Modal({ open, close, title, children }) {
+function Modal({ open, close, title, children, isCheck, checkFn, size }) {
   const outside = useRef();
 
   return (
@@ -14,12 +14,20 @@ function Modal({ open, close, title, children }) {
       }}
     >
       {open ? (
-        <section>
+        <section
+          className={size === "mini" ? styles.miniSection : styles.section}
+        >
           <header>
             {title}
             <button onClick={close}>&times;</button>
           </header>
           <main>{children}</main>
+          {isCheck === true ? (
+            <footer>
+              <button onClick={checkFn}>확인</button>
+              <button onClick={close}>취소</button>
+            </footer>
+          ) : null}
         </section>
       ) : null}
     </div>

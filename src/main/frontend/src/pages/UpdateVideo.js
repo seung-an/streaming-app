@@ -43,13 +43,19 @@ function UpdateVideo({ id, afterSave }) {
       form.append("file", fileRef.current.files[0]);
       form.append("origin", originThumbnailUrl);
 
-      await authApi
-        .post("/api/video/uploadThumbnail", form, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-        .then((response) => {
-          changeThumbnailUrl = response.data.thumbnailUrl;
-        });
+      if (
+        thumbnailUrl != null &&
+        thumbnailUrl != "" &&
+        originThumbnailUrl != thumbnailUrl
+      ) {
+        await authApi
+          .post("/api/video/uploadThumbnail", form, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then((response) => {
+            changeThumbnailUrl = response.data.thumbnailUrl;
+          });
+      }
     };
 
     const updateInfo = async () => {
@@ -65,17 +71,9 @@ function UpdateVideo({ id, afterSave }) {
         });
     };
 
-    if (
-      thumbnailUrl != null &&
-      thumbnailUrl != "" &&
-      originThumbnailUrl != thumbnailUrl
-    ) {
-      uploadThumbnail().then(() => {
-        updateInfo();
-      });
-    } else {
-      updateInfo();
-    }
+    uploadThumbnail().then(() => {
+      updateInfo().then();
+    });
   };
 
   const setOrigin = () => {

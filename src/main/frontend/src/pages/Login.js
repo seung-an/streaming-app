@@ -38,7 +38,7 @@ function Login() {
     }
 
     api
-      .post("/member/login", { memberId: inputID, password: inputPW })
+      .post("/api/member/login", { memberId: inputID, password: inputPW })
       .then((response) => {
         changeErrorMsg("");
         localStorage.setItem("accessToken", response.data.accessToken);

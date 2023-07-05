@@ -12,14 +12,13 @@ function Home() {
       setVideos(response.data.data);
     });
   }, []);
-
   return (
     <div>
       <Container fluid>
         <Row xs={1} sm={1} md={2} lg={3} xxl={4} className="g-4">
           {videos.map((video) => (
             <Col key={video.videoId}>
-              <VideoCard videoInfo={video} />
+              <VideoCard videoInfo={video} effHover={true} viewChannel={true} />
             </Col>
           ))}
         </Row>

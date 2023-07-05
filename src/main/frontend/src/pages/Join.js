@@ -79,7 +79,7 @@ function Join() {
     if (idError === "" && pwError === "" && emailError === "") {
       setTotalError("");
       api
-        .post("/member/join", {
+        .post("/api/member/join", {
           memberId: inputID,
           password: inputPW,
           name: inputName,

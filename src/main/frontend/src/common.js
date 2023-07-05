@@ -44,6 +44,20 @@ export function formatViews(views) {
   return result;
 }
 
+export function formatSub(count) {
+  var result = "";
+  count = parseFloat(count);
+
+  if (Math.floor(count / 10000) > 0) {
+    result = (Math.floor((count / 10000) * 10) / 10).toString() + "만명";
+  } else if (Math.floor(count / 1000) > 0) {
+    result = (Math.floor((count / 1000) * 10) / 10).toString() + "천명";
+  } else {
+    result = count.toString() + "명";
+  }
+  return result;
+}
+
 export function getVideoState(obj) {
   var result;
   if (obj == "public") {

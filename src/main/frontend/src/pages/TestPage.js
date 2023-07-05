@@ -2,45 +2,35 @@ import { api, authApi } from "api/api";
 import { useEffect, useState } from "react";
 
 function TestPage() {
-  const [test, setTest] = useState("");
-  const [formData, setFormData] = useState(null);
-  const testApi = () => {
-    authApi
-      .post("/api/file/video/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        setTest(response.data);
-      });
-  };
+  const [utc, setUtc] = useState("");
+  const [local, setLocal] = useState("");
 
-  const reset = () => {
-    authApi.get("/api/file/multiFileUploadAllStop").then((response) => {
-      console.log(response.data);
+  const testApi = async () => {
+    await authApi.get("/getDate").then((response) => {
+      setUtc(response.data.UTC);
     });
   };
 
-  const onChangeFile = (event) => {
-    if (!event.target.files) {
-      return;
-    }
+  useEffect(() => {
+    testApi().then();
+  });
 
-    const form = new FormData();
-    form.append("file", event.target.files[0]);
-
-    setFormData(form);
+  const utcToLocal = () => {
+    const utcDate = new Date(utc);
+    const offset = utcDate.getTimezoneOffset();
+    const localDate = new Date(utcDate.getTime() + offset * 60000);
+    setLocal(localDate.toISOString().replace("T", " ").slice(0, -5));
   };
 
   return (
     <div>
-      <div>
-        <video controls style={{ width: "300px", height: "168.75px" }}>
-          <source type="video/mp4" src={test} />
-        </video>
-      </div>
-      <input type="file" id="fileUpload" onChange={onChangeFile} />
-      <button onClick={testApi}>업로드 버튼</button>
-      <button onClick={reset}>초기화 버튼</button>
+      {utc != "" ? (
+        <div>
+          <span>utc : {utc}</span>
+          <button onClick={utcToLocal}>변환</button>
+        </div>
+      ) : null}
+      <div>local : {local}</div>
     </div>
   );
 }

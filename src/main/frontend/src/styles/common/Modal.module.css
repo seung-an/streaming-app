@@ -13,7 +13,7 @@
     cursor: pointer;
     border: 0;
 }
-.modal > section {
+.modal > .section {
     width: 90%;
     max-width: 800px;
     margin: 0 auto;
@@ -21,7 +21,18 @@
     background-color: #282828;
     /* 팝업이 열릴때 스르륵 열리는 효과 */
     animation: modal-show 0.3s;
+    border-radius: 10px;
 
+}
+.modal > .miniSection {
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 0.3rem;
+    background-color: #282828;
+    /* 팝업이 열릴때 스르륵 열리는 효과 */
+    animation: modal-show 0.3s;
+    border-radius: 10px;
 }
 .modal > section > header {
     position: relative;
@@ -29,6 +40,7 @@
     min-height: 60px;
     background-color: #282828;
     color: white;
+    border-radius: 10px;
 }
 .modal > section > header button {
     position: absolute;
@@ -52,10 +64,15 @@
 .modal > section > footer button {
     padding: 6px 12px;
     color: #fff;
-    background-color: #6c757d;
+    background-color: #585858;
     border-radius: 5px;
     font-size: 13px;
+    margin: 0px 5px;
 }
+.modal > section > footer button:hover{
+    background-color: black;
+}
+
 .modal.openModal {
     display: flex;
     align-items: center;
