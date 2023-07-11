@@ -2,6 +2,7 @@ package com.example.streamingapp.controller;
 
 import com.example.streamingapp.domain.Comment;
 import com.example.streamingapp.domain.Video;
+import com.example.streamingapp.dto.CommentDto;
 import com.example.streamingapp.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,24 +46,10 @@ public class CommentController {
 
         JSONObject resJobj = new JSONObject();
         try{
-            List<Comment> comments = commentService.getComments(Integer.parseInt(id));
+            List<CommentDto> comments = commentService.getComments(Integer.parseInt(id));
 
-            JSONArray data = new JSONArray();
-            for (Comment comment: comments) {
-                JSONObject commentJobj = new JSONObject();
-
-                commentJobj.put("commentId", comment.getCommentId());
-                commentJobj.put("memberName", comment.getMember().getName());
-                commentJobj.put("memberCode", comment.getMember().getMemberCode());
-                commentJobj.put("memberImage", comment.getMember().getImageUrl());
-                commentJobj.put("videoId", comment.getVideoId());
-                commentJobj.put("content", comment.getContent());
-                commentJobj.put("createdDt", comment.getCreatedDt());
-
-                data.add(commentJobj);
-            }
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", data);
+            resJobj.put("data", comments);
 
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }

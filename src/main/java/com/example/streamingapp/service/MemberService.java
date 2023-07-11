@@ -1,6 +1,7 @@
 package com.example.streamingapp.service;
 
 import com.example.streamingapp.domain.Member;
+import com.example.streamingapp.dto.ChannelDto;
 import com.example.streamingapp.dto.TokenInfo;
 import com.example.streamingapp.dto.UserCustom;
 import com.example.streamingapp.repository.MemberRepository;
@@ -118,12 +119,25 @@ public class MemberService {
         return member.getMemberCode();
     }
 
-    public Optional<Member> getMemberInfoByCode(Integer code){
-        return memberRepository.findById(code);
+    public ChannelDto getChannelInfoByCode(Integer code) throws Exception{
+
+        Optional<Member> info = memberRepository.findById(code);
+
+        if(!info.isPresent()){
+            throw new Exception("존재하지 않는 채널 입니다.");
+        }
+
+        return new ChannelDto(info.get());
     }
 
-    public Optional<Member> getMemberInfoByHandle(String handle){
-        return memberRepository.findByHandle(handle);
+    public ChannelDto getMemberInfoByHandle(String handle) throws Exception{
+        Optional<Member> info = memberRepository.findByHandle(handle);
+
+        if(!info.isPresent()){
+            throw new Exception("존재하지 않는 채널 입니다.");
+        }
+
+        return new ChannelDto(info.get());
     }
 
     public Boolean checkName(String name){
@@ -152,7 +166,7 @@ public class MemberService {
         }
     }
 
-    public Member updateMember(Map<String, Object> data){
+    public ChannelDto updateMember(Map<String, Object> data){
 
         Integer memberCode = getMyCode();
         Member info = memberRepository.findById(memberCode).get();
@@ -161,7 +175,7 @@ public class MemberService {
         info.setHandle((String) data.get("handle"));
         info.setImageUrl((String) data.get("imageUrl"));
 
-        return memberRepository.save(info);
+        return new ChannelDto(memberRepository.save(info));
     }
 
 

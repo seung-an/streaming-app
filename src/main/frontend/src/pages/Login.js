@@ -41,10 +41,16 @@ function Login() {
       .post("/api/member/login", { memberId: inputID, password: inputPW })
       .then((response) => {
         changeErrorMsg("");
-        localStorage.setItem("accessToken", response.data.accessToken);
-        localStorage.setItem("memberCode", response.data.memberCode);
-        localStorage.setItem("memberName", response.data.memberName);
-        localStorage.setItem("memberImage", response.data.memberImage);
+        localStorage.setItem(
+          "accessToken",
+          response.data.tokenInfo.accessToken
+        );
+        localStorage.setItem("memberCode", response.data.tokenInfo.memberCode);
+        localStorage.setItem("memberName", response.data.tokenInfo.memberName);
+        localStorage.setItem(
+          "memberImage",
+          response.data.tokenInfo.memberImage
+        );
         localStorage.setItem("isLogin", "T");
         navigate("/");
       })

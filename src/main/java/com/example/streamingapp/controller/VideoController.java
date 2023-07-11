@@ -1,6 +1,7 @@
 package com.example.streamingapp.controller;
 
 import com.example.streamingapp.domain.Video;
+import com.example.streamingapp.dto.VideoDto;
 import com.example.streamingapp.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,26 +86,10 @@ public class VideoController {
     public ResponseEntity getMyVideos(){
         JSONObject resJobj = new JSONObject();
         try{
-            List<Video> videoList = videoService.getMyVideos();
+            List<VideoDto> videoList = videoService.getMyVideos();
 
-            JSONArray data = new JSONArray();
-            for (Video video: videoList) {
-                JSONObject videoJobj = new JSONObject();
-
-                videoJobj.put("videoId", video.getVideoId());
-                videoJobj.put("title", video.getTitle());
-                videoJobj.put("description", video.getDescription());
-                videoJobj.put("state", video.getState());
-                videoJobj.put("createdDt", video.getCreatedDt());
-                videoJobj.put("views", video.getViews());
-                videoJobj.put("likes", video.getLikes());
-                videoJobj.put("thumbnailUrl", video.getThumbnailUrl());
-                videoJobj.put("videoUrl", video.getVideoUrl());
-
-                data.add(videoJobj);
-            }
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", data);
+            resJobj.put("data", videoList);
 
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
@@ -120,30 +105,10 @@ public class VideoController {
     public ResponseEntity getVideos(@RequestParam @Nullable String searchQuery){
         JSONObject resJobj = new JSONObject();
         try{
-            List<Video> videoList = videoService.getVideos(searchQuery);
+            List<VideoDto> videoList = videoService.getVideos(searchQuery);
 
-            JSONArray data = new JSONArray();
-            for (Video video: videoList) {
-                JSONObject videoJobj = new JSONObject();
-
-                videoJobj.put("videoId", video.getVideoId());
-                videoJobj.put("channelCode", video.getMember().getMemberCode());
-                videoJobj.put("channelHandle", video.getMember().getHandle());
-                videoJobj.put("channelName", video.getMember().getName());
-                videoJobj.put("channelImage", video.getMember().getImageUrl());
-                videoJobj.put("title", video.getTitle());
-                videoJobj.put("description", video.getDescription());
-                videoJobj.put("state", video.getState());
-                videoJobj.put("createdDt", video.getCreatedDt());
-                videoJobj.put("views", video.getViews());
-                videoJobj.put("likes", video.getLikes());
-                videoJobj.put("thumbnailUrl", video.getThumbnailUrl());
-                videoJobj.put("videoUrl", video.getVideoUrl());
-
-                data.add(videoJobj);
-            }
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", data);
+            resJobj.put("data", videoList);
 
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
@@ -159,30 +124,10 @@ public class VideoController {
     public ResponseEntity getChannelVideos(@PathVariable String handle){
         JSONObject resJobj = new JSONObject();
         try{
-            List<Video> videoList = videoService.getChannelVideos(handle);
+            List<VideoDto> videoList = videoService.getChannelVideos(handle);
 
-            JSONArray data = new JSONArray();
-            for (Video video: videoList) {
-                JSONObject videoJobj = new JSONObject();
-
-                videoJobj.put("videoId", video.getVideoId());
-                videoJobj.put("channelCode", video.getMember().getMemberCode());
-                videoJobj.put("channelHandle", video.getMember().getHandle());
-                videoJobj.put("channelName", video.getMember().getName());
-                videoJobj.put("channelImage", video.getMember().getImageUrl());
-                videoJobj.put("title", video.getTitle());
-                videoJobj.put("description", video.getDescription());
-                videoJobj.put("state", video.getState());
-                videoJobj.put("createdDt", video.getCreatedDt());
-                videoJobj.put("views", video.getViews());
-                videoJobj.put("likes", video.getLikes());
-                videoJobj.put("thumbnailUrl", video.getThumbnailUrl());
-                videoJobj.put("videoUrl", video.getVideoUrl());
-
-                data.add(videoJobj);
-            }
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", data);
+            resJobj.put("data", videoList);
 
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
@@ -198,39 +143,17 @@ public class VideoController {
     public ResponseEntity getVideoInfo(@PathVariable String id){
         JSONObject resJobj = new JSONObject();
         try{
-            Optional<Video> videoInfo = videoService.getVideoInfo(Integer.parseInt(id));
-            if(!videoInfo.isPresent()){
-                resJobj.put("status", "ERROR");
-                resJobj.put("message", "존재하지 않는 동영상 입니다.");
-                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
-            }
-
-            JSONObject videoJobj = new JSONObject();
-
-            videoJobj.put("videoId", videoInfo.get().getVideoId());
-            videoJobj.put("channelCode", videoInfo.get().getMember().getMemberCode());
-            videoJobj.put("channelHandle", videoInfo.get().getMember().getHandle());
-            videoJobj.put("channelName", videoInfo.get().getMember().getName());
-            videoJobj.put("channelImage", videoInfo.get().getMember().getImageUrl());
-            videoJobj.put("title", videoInfo.get().getTitle());
-            videoJobj.put("description", videoInfo.get().getDescription());
-            videoJobj.put("state", videoInfo.get().getState());
-            videoJobj.put("createdDt", videoInfo.get().getCreatedDt());
-            videoJobj.put("views", videoInfo.get().getViews());
-            videoJobj.put("likes", videoInfo.get().getLikes());
-            videoJobj.put("thumbnailUrl", videoInfo.get().getThumbnailUrl());
-            videoJobj.put("videoUrl", videoInfo.get().getVideoUrl());
+            VideoDto video = videoService.getVideoInfo(Integer.parseInt(id));
 
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", videoJobj);
-
+            resJobj.put("data", video);
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch(Exception e) {
             resJobj = new JSONObject();
             resJobj.put("status", "ERROR");
             resJobj.put("message", e.getMessage());
-            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
         }
     }
 

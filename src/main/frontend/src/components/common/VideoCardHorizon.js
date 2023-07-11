@@ -8,11 +8,17 @@ import DeleteIcon from "./DeleteIcon";
 function VideoCardHorizon({ videoInfo, deleteFun }) {
   const [isHover, setIsHover] = useState(false);
   const navigate = useNavigate();
-  const movePage = () => {
+
+  const goWatch = () => {
     navigate("/watch/" + videoInfo.videoId);
   };
+
+  const goChannel = (e) => {
+    e.stopPropagation();
+    navigate("/channel/" + videoInfo.channel.channelHandle);
+  };
+
   return (
-    // <Link to={"/watch/" + videoInfo.videoId}>
     <div
       className={styles.videoBox}
       onMouseOver={() => {
@@ -21,15 +27,19 @@ function VideoCardHorizon({ videoInfo, deleteFun }) {
       onMouseOut={() => {
         setIsHover(false);
       }}
-      onClick={movePage}
+      onClick={goWatch}
     >
       <div className={styles.imgBox}>
         <img src={videoInfo.thumbnailUrl} className={styles.videoImg} />
       </div>
       <div className={styles.infoBox}>
-        <div className={styles.title}>{videoInfo.title}</div>
-        <div className={styles.channel}>
-          <a href={"#"}>{videoInfo.channelName}</a>
+        <div className={styles.title} title={videoInfo.title}>
+          {videoInfo.title}
+        </div>
+        <div>
+          <div className={styles.channel} onClick={goChannel}>
+            {videoInfo.channel.channelName}
+          </div>
         </div>
         <div className={styles.viewsAndDt}>
           조회수 {common.formatViews(videoInfo.views)} •{" "}
@@ -47,7 +57,6 @@ function VideoCardHorizon({ videoInfo, deleteFun }) {
         </div>
       ) : null}
     </div>
-    // </Link>
   );
 }
 

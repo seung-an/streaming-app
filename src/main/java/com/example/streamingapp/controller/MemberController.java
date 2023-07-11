@@ -2,6 +2,7 @@ package com.example.streamingapp.controller;
 
 import com.example.streamingapp.domain.Member;
 import com.example.streamingapp.domain.Video;
+import com.example.streamingapp.dto.ChannelDto;
 import com.example.streamingapp.dto.MemberLoginRequestDto;
 import com.example.streamingapp.dto.TokenInfo;
 import com.example.streamingapp.service.MemberService;
@@ -51,12 +52,8 @@ public class MemberController {
             TokenInfo tokenInfo = memberService.getToken(memberId, password);
 
             createCookie("refreshToken", tokenInfo.getRefreshToken(), response);
-            resJobj.put("status", "ERROR");
-            resJobj.put("grantType", tokenInfo.getGrantType());
-            resJobj.put("accessToken", tokenInfo.getAccessToken());
-            resJobj.put("memberCode", tokenInfo.getMemberCode());
-            resJobj.put("memberName", tokenInfo.getMemberName());
-            resJobj.put("memberImage", tokenInfo.getMemberImage());
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("tokenInfo", tokenInfo);
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
@@ -76,8 +73,7 @@ public class MemberController {
 
             createCookie("refreshToken", tokenInfo.getRefreshToken(), response);
             resJobj.put("status", "ERROR");
-            resJobj.put("grantType", tokenInfo.getGrantType());
-            resJobj.put("accessToken", tokenInfo.getAccessToken());
+            resJobj.put("tokenInfo", tokenInfo);
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch (Exception e){
@@ -110,16 +106,10 @@ public class MemberController {
 
         JSONObject resJobj = new JSONObject();
         try {
-            Member info = memberService.updateMember(data);
-
-            JSONObject infoJobj = new JSONObject();
-            infoJobj.put("channelCode", info.getMemberCode());
-            infoJobj.put("channelName", info.getName());
-            infoJobj.put("channelImage", info.getImageUrl());
-            infoJobj.put("channelHandle", info.getHandle());
+            ChannelDto info = memberService.updateMember(data);
 
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", infoJobj);
+            resJobj.put("data", info);
             return new ResponseEntity(resJobj.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
 
@@ -153,28 +143,19 @@ public class MemberController {
     public ResponseEntity getChannelInfoByCode(@PathVariable String code){
         JSONObject resJobj = new JSONObject();
         try{
-            Optional<Member> info = memberService.getMemberInfoByCode(Integer.parseInt(code));
-            if(!info.isPresent()){
-                resJobj.put("status", "ERROR");
-                resJobj.put("message", "존재하지 않는 채널 입니다.");
-                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
-            }
-
-            JSONObject infoJobj = new JSONObject();
-            infoJobj.put("channelCode", info.get().getMemberCode());
-            infoJobj.put("channelName", info.get().getName());
-            infoJobj.put("channelImage", info.get().getImageUrl());
-            infoJobj.put("channelHandle", info.get().getHandle());
+            ChannelDto info = memberService.getChannelInfoByCode(Integer.parseInt(code));
+            info.setChannelSubscribeCount(subscribeService.getSubscribeCount(info.getChannelCode()));
+            info.setIsSubscribe(subscribeService.checkSubscribe(info.getChannelCode()));
 
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", infoJobj);
+            resJobj.put("data", info);
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch(Exception e) {
             resJobj = new JSONObject();
             resJobj.put("status", "ERROR");
             resJobj.put("message", e.getMessage());
-            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -182,22 +163,12 @@ public class MemberController {
     public ResponseEntity getChannelInfoByHandle(@PathVariable String handle){
         JSONObject resJobj = new JSONObject();
         try{
-            Optional<Member> info = memberService.getMemberInfoByHandle(handle);
-            if(!info.isPresent()){
-                resJobj.put("status", "ERROR");
-                resJobj.put("message", "존재하지 않는 채널 입니다.");
-                return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
-            }
-
-            JSONObject infoJobj = new JSONObject();
-            infoJobj.put("channelCode", info.get().getMemberCode());
-            infoJobj.put("channelName", info.get().getName());
-            infoJobj.put("channelImage", info.get().getImageUrl());
-            infoJobj.put("channelSubscribeCount", subscribeService.getSubscribeCount(info.get().getMemberCode()));
-            infoJobj.put("isSubscribe", subscribeService.checkSubscribe(info.get().getMemberCode()));
+            ChannelDto info = memberService.getMemberInfoByHandle(handle);
+            info.setChannelSubscribeCount(subscribeService.getSubscribeCount(info.getChannelCode()));
+            info.setIsSubscribe(subscribeService.checkSubscribe(info.getChannelCode()));
 
             resJobj.put("status", "SUCCESS");
-            resJobj.put("data", infoJobj);
+            resJobj.put("data", info);
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch(Exception e) {

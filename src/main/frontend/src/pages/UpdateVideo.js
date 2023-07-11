@@ -5,11 +5,12 @@ import { authApi } from "../api/api";
 function UpdateVideo({ id, afterSave }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [state, setState] = useState("");
+  const [state, setState] = useState("private");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [originThumbnailUrl, setOriginThumbnailUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const fileRef = useRef(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const changeTitle = (e) => {
     setTitle(e.target.value);
@@ -36,6 +37,13 @@ function UpdateVideo({ id, afterSave }) {
   }, []);
 
   const changeInfo = () => {
+    const errorCheck = document.querySelectorAll(`.${styles.errorItemBox}`);
+
+    if (errorCheck.length > 0) {
+      setErrorMsg("규칙에 맞게 정보를 입력해 주세요.");
+      return;
+    }
+
     let changeThumbnailUrl = originThumbnailUrl;
 
     const uploadThumbnail = async () => {
@@ -94,7 +102,11 @@ function UpdateVideo({ id, afterSave }) {
     <div>
       <div className={styles.updateBox}>
         <div className={styles.dataSection}>
-          <div className={styles.itemBox}>
+          <div
+            className={
+              title.length > 100 ? styles.errorItemBox : styles.itemBox
+            }
+          >
             <div>제목</div>
             <textarea
               className={styles.titleBox}
@@ -102,8 +114,19 @@ function UpdateVideo({ id, afterSave }) {
               placeholder={"동영상 제목 추가"}
               onChange={changeTitle}
             />
+            <div
+              className={
+                title.length > 100 ? styles.errorTextLength : styles.textLength
+              }
+            >
+              ({title.length}/100)
+            </div>
           </div>
-          <div className={styles.itemBox}>
+          <div
+            className={
+              description.length > 5000 ? styles.errorItemBox : styles.itemBox
+            }
+          >
             <div>설명</div>
             <textarea
               className={styles.descriptionBox}
@@ -111,6 +134,15 @@ function UpdateVideo({ id, afterSave }) {
               placeholder={"동영상 설명 추가"}
               onChange={changeDescription}
             />
+            <div
+              className={
+                description.length > 5000
+                  ? styles.errorTextLength
+                  : styles.textLength
+              }
+            >
+              ({description.length}/5000)
+            </div>
           </div>
           <div className={styles.itemBox}>
             <div>상태</div>
@@ -119,8 +151,8 @@ function UpdateVideo({ id, afterSave }) {
               value={state}
               onChange={changeState}
             >
-              <option value={"public"}>공개</option>
               <option value={"private"}>비공개</option>
+              <option value={"public"}>공개</option>
             </select>
           </div>
         </div>
@@ -149,11 +181,11 @@ function UpdateVideo({ id, afterSave }) {
             )}
           </div>
           <div className={styles.subject}>
-            <button className={styles.thumbnailBtn} onClick={setOrigin}>
+            <button className={styles.btn} onClick={setOrigin}>
               기존 썸네일
             </button>
             <button
-              className={styles.thumbnailBtn}
+              className={styles.btn}
               onClick={() => fileRef.current.click()}
             >
               썸네일 수정
@@ -162,7 +194,8 @@ function UpdateVideo({ id, afterSave }) {
         </div>
       </div>
       <div>
-        <button className={styles.saveBtn} onClick={changeInfo}>
+        <span className={styles.errorMsg}>{errorMsg}</span>
+        <button className={styles.btn} onClick={changeInfo}>
           수정
         </button>
       </div>

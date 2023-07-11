@@ -13,6 +13,8 @@ import Channel from "./pages/Channel";
 import ChannelVideos from "./pages/ChannelVideos";
 import ChannelPlaylist from "./pages/ChannelPlaylist";
 import Setting from "./pages/Setting";
+import MyPlaylist from "./pages/MyPlaylist";
+import PlaylistVideos from "./pages/PlaylistVideos";
 
 function App() {
   useEffect(() => {}, []);
@@ -25,9 +27,11 @@ function App() {
             <Route path={"/"} element={<Home />} />
             <Route path={"/test"} element={<TestPage />} />
             <Route path={"/myVideos"} element={<MyVideos />} />
+            <Route path={"/myPlaylist"} element={<MyPlaylist />} />
             <Route path={"/watch/:id"} element={<WatchVideo />} />
             <Route path={"/search"} element={<SearchVideo />} />
             <Route path={"/history"} element={<History />} />
+            <Route path={"/playlist/:id"} element={<PlaylistVideos />} />
             <Route path={"/channel/:handle"} element={<Channel />}>
               <Route path={""} element={<ChannelVideos />} />
               <Route path={"playlist"} element={<ChannelPlaylist />} />

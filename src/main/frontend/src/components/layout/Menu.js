@@ -6,6 +6,7 @@ import iconHistory from "icons/icon-history.png";
 import iconMyVideo from "icons/icon-myVideo.png";
 import iconPlaylist from "icons/icon-playlist.png";
 import iconSetting from "icons/icon-setting.png";
+import iconSubscribe from "icons/icon-subscribe.png";
 
 function Menu({ subscribeList }) {
   const pathName = useLocation().pathname;
@@ -14,7 +15,8 @@ function Menu({ subscribeList }) {
     { name: "홈", path: "/", icon: iconHome },
     { name: "시청 기록", path: "/history", icon: iconHistory },
     { name: "내 동영상", path: "/myVideos", icon: iconMyVideo },
-    { name: "테스트 메뉴", path: "/test", icon: iconPlaylist },
+    { name: "재생목록", path: "/myPlaylist", icon: iconPlaylist },
+    { name: "테스트", path: "/test", icon: iconSubscribe },
   ];
 
   const addMenus = [{ name: "설정", path: "/setting", icon: iconSetting }];
@@ -45,7 +47,9 @@ function Menu({ subscribeList }) {
                 <MenuItem
                   channel={sub}
                   isActive={
-                    pathName === "/channel/" + sub.channelHandle ? true : false
+                    pathName.includes("/channel/" + sub.channelHandle)
+                      ? true
+                      : false
                   }
                 />
               </Link>

@@ -34,6 +34,18 @@
     animation: modal-show 0.3s;
     border-radius: 10px;
 }
+
+.modal > .tinySection {
+    width: 90%;
+    max-width: 200px;
+    margin: 0 auto;
+    border-radius: 0.3rem;
+    background-color: #282828;
+    /* 팝업이 열릴때 스르륵 열리는 효과 */
+    animation: modal-show 0.3s;
+    border-radius: 10px;
+}
+
 .modal > section > header {
     position: relative;
     padding: 16px 64px 16px 16px;

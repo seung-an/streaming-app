@@ -15,7 +15,13 @@ function Modal({ open, close, title, children, isCheck, checkFn, size }) {
     >
       {open ? (
         <section
-          className={size === "mini" ? styles.miniSection : styles.section}
+          className={
+            size === "mini"
+              ? styles.miniSection
+              : size === "tiny"
+              ? styles.tinySection
+              : styles.section
+          }
         >
           <header>
             {title}

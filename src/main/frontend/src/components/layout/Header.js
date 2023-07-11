@@ -18,6 +18,9 @@ function Header() {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("memberCode");
+    localStorage.removeItem("memberName");
+    localStorage.removeItem("memberImage");
     cookie.remove("refreshToken");
     localStorage.setItem("isLogin", "F");
   };

@@ -2,6 +2,7 @@ package com.example.streamingapp.service;
 
 import com.example.streamingapp.domain.Comment;
 import com.example.streamingapp.domain.Member;
+import com.example.streamingapp.dto.CommentDto;
 import com.example.streamingapp.dto.UserCustom;
 import com.example.streamingapp.repository.CommentRepository;
 import com.example.streamingapp.repository.MemberRepository;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = false)
@@ -46,8 +48,9 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<Comment> getComments(Integer videoId){
-        return commentRepository.findAllByVideoIdOrderByCreatedDtAsc(videoId);
+    public List<CommentDto> getComments(Integer videoId){
+        List<Comment> comments = commentRepository.findAllByVideoIdOrderByCreatedDtAsc(videoId);
+        return comments.stream().map(c -> new CommentDto(c)).collect(Collectors.toList());
     }
 
     public void deleteComment(Integer commentId){

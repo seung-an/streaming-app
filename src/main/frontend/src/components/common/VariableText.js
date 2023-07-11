@@ -42,7 +42,10 @@ function VariableText({ text, limit }) {
       </div>
       <div>
         {isOverflow ? (
-          <a style={{ color: "#686868" }} onClick={changeMore}>
+          <a
+            style={{ color: "#686868", fontSize: "0.9rem" }}
+            onClick={changeMore}
+          >
             {more ? "간략히" : "더보기"}
           </a>
         ) : null}

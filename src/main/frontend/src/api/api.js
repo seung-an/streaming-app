@@ -56,9 +56,9 @@ authApi.interceptors.response.use(
           )
           .then((res) => {
             //기존 요청에 새로운 토큰으로 변경
-            originalRequest.headers.authorization = `Bearer ${res.data.accessToken}`;
+            originalRequest.headers.authorization = `Bearer ${res.data.tokenInfo.accessToken}`;
             //로컬 스토리지에 새로운 토큰 저장
-            localStorage.setItem("accessToken", res.data.accessToken);
+            localStorage.setItem("accessToken", res.data.tokenInfo.accessToken);
           })
           .catch((error) => {
             //에러 시 재로그인을 위해 로그인 페이지로 이동

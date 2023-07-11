@@ -6,28 +6,23 @@
     cursor: pointer;
 }
 
-.videoBox:hover{
-    background-color: #282828;
-}
-
 .imgBox{
-    display: inline-block;
-    width: 320px;
-    height: 180px;
+    padding-top: 11.25%;
+    position: relative;
+    width: 20%;
 }
 
 .infoBox{
     display: inline-block;
-    width: calc(100% - 350px);
-    height: 180px;
+    width: calc(80% - 40px);
     padding: 10px;
 }
 
 .title{
-    font-size: 1.2vw;
+    font-size: 1.2rem;
     padding-bottom: 10px;
     overflow: hidden;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
@@ -37,13 +32,23 @@
     word-wrap: break-word;
 }
 
-.channel a, .viewsAndDt{
-    color: #585858;
+.channel, .viewsAndDt{
+    color: gray;
+    font-size: 0.9rem;
+    display:inline
+}
+
+.channel:hover{
+    color: lightgrey;
 }
 
 .videoImg{
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
+    border: 0;
     border-radius: 10px;
 }
 

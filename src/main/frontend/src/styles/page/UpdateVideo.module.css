@@ -17,8 +17,21 @@
 
 }
 
+.errorItemBox{
+    width: 100%;
+    border: 2px solid red;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+
+}
+
 .itemBox:focus-within{
     border: 2px solid white;
+}
+
+.itemBox:focus-within .textLength, .errorItemBox:focus-within .errorTextLength{
+    display: block;
 }
 
 .titleBox{
@@ -89,12 +102,40 @@
     width: 100%;
 }
 
-.saveBtn, .thumbnailBtn{
+.btn{
     margin: 5px;
     float: right;
     height: 30px;
     border: none;
     border-radius: 10px;
-    background-color: dodgerblue;
+    padding: 0px 5px;
+    background-color: #585858;
     color: white;
+    min-width: 70px;
 }
+
+.btn:hover{
+    background-color: black;
+}
+
+.textLength{
+    font-size: 0.8rem;
+    width: 100%;
+    text-align: right;
+    display: none;
+}
+
+.errorTextLength{
+    color: red;
+    font-size: 0.8rem;
+    width: 100%;
+    text-align: right;
+    display: none;
+}
+
+.errorMsg{
+    color: red;
+    padding: 10px;
+}
+
+

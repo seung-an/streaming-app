@@ -3,6 +3,7 @@ package com.example.streamingapp.service;
 import com.example.streamingapp.domain.Member;
 import com.example.streamingapp.domain.Video;
 import com.example.streamingapp.dto.UserCustom;
+import com.example.streamingapp.dto.VideoDto;
 import com.example.streamingapp.repository.MemberRepository;
 import com.example.streamingapp.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = false)
@@ -47,31 +49,43 @@ public class VideoService {
         return videoRepository.save(videoInfo).getVideoId();
     }
 
-    public List<Video> getMyVideos(){
+    public List<VideoDto> getMyVideos(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCustom userDetails = (UserCustom)principal;
         Integer memberCode = userDetails.getMemberCode();
 
-        return videoRepository.findAllByMember_memberCodeAndStateNotOrderByCreatedDtDesc(memberCode, "deleted");
+        List<Video> videos = videoRepository.findAllByMember_memberCodeAndStateNotOrderByCreatedDtDesc(memberCode, "deleted");
+
+        return videos.stream().map(v -> new VideoDto(v)).collect(Collectors.toList());
     }
 
-    public List<Video> getVideos(String searchQuery){
+    public List<VideoDto> getVideos(String searchQuery){
+
+        List<Video> videos;
 
         if(searchQuery == null) {
-
-            return videoRepository.findAllByStateOrderByCreatedDtDesc("public");
+            videos = videoRepository.findAllByStateOrderByCreatedDtDesc("public");
         }
         else{
-            return videoRepository.findAllByStateAndTitleContainingIgnoreCaseOrderByCreatedDtDesc("public", searchQuery);
+            videos = videoRepository.findAllByStateAndTitleContainingIgnoreCaseOrderByCreatedDtDesc("public", searchQuery);
         }
+
+        return videos.stream().map(v -> new VideoDto(v)).collect(Collectors.toList());
     }
 
-    public List<Video> getChannelVideos(String handle){
-        return videoRepository.findAllByMember_HandleAndStateOrderByCreatedDtDesc(handle, "public");
+    public List<VideoDto> getChannelVideos(String handle){
+        List<Video> videos = videoRepository.findAllByMember_HandleAndStateOrderByCreatedDtDesc(handle, "public");
+        return videos.stream().map(v -> new VideoDto(v)).collect(Collectors.toList());
     }
 
-    public Optional<Video> getVideoInfo(Integer id){
-        return videoRepository.findById(id);
+    public VideoDto getVideoInfo(Integer id) throws Exception {
+
+        Optional<Video> info = videoRepository.findById(id);
+        if(!info.isPresent()){
+            throw new Exception("존재하지 않는 동영상 입니다.");
+        }
+
+        return new VideoDto(info.get());
     }
 
     public void updateVideo(Integer id, Map<String, Object> data) throws Exception{

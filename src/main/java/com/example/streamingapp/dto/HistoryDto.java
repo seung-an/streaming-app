@@ -1,0 +1,28 @@
+package com.example.streamingapp.dto;
+
+import com.example.streamingapp.domain.History;
+import com.example.streamingapp.domain.Member;
+import lombok.Data;
+
+@Data
+public class HistoryDto {
+    private Integer videoId;
+    private ChannelDto channel;
+    private String title;
+    private String description;
+    private Integer views;
+    private String thumbnailUrl;
+    private String createdDt;
+    private String watchDt;
+
+    public HistoryDto(History history){
+        this.videoId = history.getVideo().getVideoId();
+        this.channel = new ChannelDto(history.getVideo().getMember());
+        this.title = history.getVideo().getTitle();
+        this.description = history.getVideo().getDescription();
+        this.views = history.getVideo().getViews();
+        this.thumbnailUrl = history.getVideo().getThumbnailUrl();
+        this.createdDt = history.getVideo().getCreatedDt();
+        this.watchDt = history.getWatchDt();
+    }
+}

@@ -2,6 +2,7 @@ package com.example.streamingapp.service;
 
 import com.example.streamingapp.domain.History;
 import com.example.streamingapp.domain.HistoryPK;
+import com.example.streamingapp.dto.HistoryDto;
 import com.example.streamingapp.dto.UserCustom;
 import com.example.streamingapp.repository.HistoryRepository;
 import com.example.streamingapp.repository.MemberRepository;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = false)
@@ -43,12 +45,14 @@ public class HistoryService {
         historyRepository.save(history);
     }
 
-    public List<History> getHistories(){
+    public List<HistoryDto> getHistories(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCustom userDetails = (UserCustom)principal;
         Integer memberCode = userDetails.getMemberCode();
 
-        return historyRepository.findAllByHistoryPKMemberCodeOrderByWatchDtDesc(memberCode);
+        List<History> histories = historyRepository.findAllByHistoryPKMemberCodeOrderByWatchDtDesc(memberCode);
+
+        return histories.stream().map(h -> new HistoryDto(h)).collect(Collectors.toList());
     }
 
     public void deleteHistory(Integer videoId){

@@ -2,10 +2,15 @@
     width: 75%;
 }
 
-.videoTitle{
+.titleBox{
     width: 75%;
-    padding: 10px 0px 10px 0px;
-    font-size: 25px;
+    display: flex;
+}
+
+.videoTitle{
+    width: 95%;
+    padding: 10px 0px;
+    font-size: 1.5rem;
     overflow: hidden;
     -webkit-line-clamp: 1;
     display: -webkit-box;
@@ -15,6 +20,48 @@
     border: none;
     word-break: break-all;
     word-wrap: break-word;
+}
+
+.addPlaylist{
+    background-color: #282828;
+    border-radius: 50px;
+    width: 80px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+.addPlaylist:hover{
+    background-color: #585858;
+}
+
+.iconAddPlaylist{
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
+
+.channelBox{
+    width: 75%;
+    padding: 10px 0px;
+    display: flex;
+}
+
+.channelInfoBox{
+    display: flex;
+    flex-direction: column;
+}
+
+.channelName{
+
+}
+
+.subscribeCount{
+    font-size: 0.9rem;
+    color: gray;
 }
 
 .detailBox{
@@ -50,10 +97,20 @@
     color: #686868;
 }
 
+.newCommentBox{
+    display: flex;
+}
+
 .newCommentBox, .commentsBox{
     padding: 10px;
     width: 75%;
     position: relative;
+}
+
+.newCommentInfo{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .inputComment{
@@ -65,6 +122,7 @@
     word-wrap: break-word;
     border: 0;
     border-bottom: 2px solid #585858;
+    margin-top: 10px;
 }
 
 .inputComment:focus{
@@ -89,13 +147,13 @@
     bottom: 10px;
     right: 10px;
     border: none;
-    background-color: black;
+    background-color: #282828;
     color: white;
     border-radius: 50px;
 }
 
 .addCommentBtn:hover{
-    background-color: #282828;
+    background-color: #585858;
 }
 
 .eachComment{
@@ -107,12 +165,12 @@
     width: 90%;
 }
 
-.commentMember{
+.commentChannelName{
     padding-right: 10px;
     display: inline-block;
 }
 
-.commentMemberImage{
+.channelImage{
     background-color: dodgerblue;
     width: 50px;
     height: 50px;

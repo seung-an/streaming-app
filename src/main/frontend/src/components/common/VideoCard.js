@@ -13,7 +13,7 @@ function VideoCard({ videoInfo, effHover, viewChannel }) {
 
   const goChannel = (e) => {
     e.stopPropagation();
-    navigate("/channel/" + videoInfo.channelHandle);
+    navigate("/channel/" + videoInfo.channel.channelHandle);
   };
 
   return (
@@ -26,18 +26,23 @@ function VideoCard({ videoInfo, effHover, viewChannel }) {
       </Card.Header>
       <Card.Body className={styles.videoBody}>
         {viewChannel === true ? (
-          <img className={styles.channelImg} src={videoInfo.channelImage} />
+          <img
+            className={styles.channelImg}
+            src={videoInfo.channel.channelImage}
+          />
         ) : null}
         <div
           className={
             viewChannel === true ? styles.videoInfo : styles.noChVideoInfo
           }
         >
-          <div className={styles.videoTitle}>{videoInfo.title}</div>
+          <div className={styles.videoTitle} title={videoInfo.title}>
+            {videoInfo.title}
+          </div>
           <div>
             {viewChannel === true ? (
               <div onClick={goChannel} className={styles.channelName}>
-                {videoInfo.channelName}
+                {videoInfo.channel.channelName}
               </div>
             ) : null}
             <div className={styles.viewsAndDt}>
