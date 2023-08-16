@@ -11,12 +11,18 @@
     justify-content: center;
 }
 
+.playlistHeader{
+    position: relative;
+    padding-top: 56.25%;
+}
+
 .hoverBox{
     background-color: rgba(0, 0, 0, 0.8);
     display: none;
     width: 100%;
     height: 100%;
     position: absolute;
+    top: 0;
 }
 
 .hoverImage{
@@ -26,14 +32,18 @@
 
 .playlistImg{
     border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .playlistInfo{
     position: absolute;
     padding: 5px 10px;
     font-size: 0.8rem;
-    top: calc(100% - 2rem);
-    height: 2rem;
+    bottom: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     text-align: right;

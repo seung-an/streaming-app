@@ -50,7 +50,7 @@ public class HistoryService {
         UserCustom userDetails = (UserCustom)principal;
         Integer memberCode = userDetails.getMemberCode();
 
-        List<History> histories = historyRepository.findAllByHistoryPKMemberCodeOrderByWatchDtDesc(memberCode);
+        List<History> histories = historyRepository.findAllByHistoryPKMemberCodeAndVideo_stateOrderByWatchDtDesc(memberCode, "public");
 
         return histories.stream().map(h -> new HistoryDto(h)).collect(Collectors.toList());
     }

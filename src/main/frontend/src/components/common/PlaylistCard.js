@@ -1,4 +1,3 @@
-import { Card } from "react-bootstrap";
 import styles from "../../styles/common/PlaylistCard.module.css";
 import iconEnter from "icons/icon-enter.png";
 import * as common from "../../common";
@@ -12,8 +11,8 @@ function PlaylistCard({ info }) {
   };
 
   return (
-    <Card className={styles.playlist} onClick={goPlaylist}>
-      <Card.Header className={"ratio ratio-16x9"}>
+    <div className={styles.playlist} onClick={goPlaylist}>
+      <div className={styles.playlistHeader}>
         <img src={info.playlistImageUrl} className={styles.playlistImg} />
         <div className={styles.playlistInfo}>
           동영상 {info.playlistVideoCount}개
@@ -21,14 +20,14 @@ function PlaylistCard({ info }) {
         <div className={styles.hoverBox}>
           <img src={iconEnter} className={styles.hoverImage} />
         </div>
-      </Card.Header>
+      </div>
       <div className={styles.playlistBody}>
         <div className={styles.playlistTitle}>{info.playlistTitle}</div>
         <div className={styles.updateDt}>
           {common.formattime(info.playlistUpdateDt)} 업데이트됨
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 

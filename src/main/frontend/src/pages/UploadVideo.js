@@ -4,6 +4,7 @@ import { authApi } from "api/api";
 
 function UploadVideo({ update }) {
   const dragRef = useRef(null);
+  const [progress, setProgress] = useState(0);
 
   const changeFile = (e) => {
     let selectFiles = [];
@@ -16,13 +17,28 @@ function UploadVideo({ update }) {
     const form = new FormData();
     form.append("file", selectFiles[0]);
 
-    authApi
-      .post("/api/video/upload", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        update(response.data.videoId);
-      });
+    const sse = new EventSource("/sse/connect");
+
+    sse.addEventListener("key", (e) => {
+      const { data: key } = e;
+      form.append("key", key);
+      authApi
+        .post("/api/video/upload", form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((response) => {
+          update(response.data.videoId);
+          sse.close();
+        })
+        .catch(() => {
+          sse.close();
+        });
+    });
+
+    sse.addEventListener("progress", (e) => {
+      const { data: progress } = e;
+      setProgress(Number(progress));
+    });
   };
 
   const handleDragIn = useCallback((e) => {
@@ -75,6 +91,12 @@ function UploadVideo({ update }) {
 
   return (
     <div>
+      <div className={styles.progressBox}>
+        <div
+          className={styles.progress}
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
       <input
         type="file"
         id="fileUpload"

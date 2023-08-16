@@ -45,12 +45,6 @@ function Login() {
           "accessToken",
           response.data.tokenInfo.accessToken
         );
-        localStorage.setItem("memberCode", response.data.tokenInfo.memberCode);
-        localStorage.setItem("memberName", response.data.tokenInfo.memberName);
-        localStorage.setItem(
-          "memberImage",
-          response.data.tokenInfo.memberImage
-        );
         localStorage.setItem("isLogin", "T");
         navigate("/");
       })

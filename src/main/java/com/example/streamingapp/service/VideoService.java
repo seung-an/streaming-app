@@ -1,12 +1,16 @@
 package com.example.streamingapp.service;
 
 import com.example.streamingapp.domain.Member;
+import com.example.streamingapp.domain.Subscribe;
 import com.example.streamingapp.domain.Video;
 import com.example.streamingapp.dto.UserCustom;
 import com.example.streamingapp.dto.VideoDto;
 import com.example.streamingapp.repository.MemberRepository;
 import com.example.streamingapp.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.probe.FFmpegFormat;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +27,8 @@ public class VideoService {
     private  final MemberRepository memberRepository;
     private  final VideoRepository videoRepository;
 
-    public Integer createVideo(String videoUrl, String thumbnailUrl){
-
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserCustom userDetails = (UserCustom)principal;
-        Integer memberCode = userDetails.getMemberCode();
+    public Integer createVideo(String videoUrl, String thumbnailUrl, Integer runningTime){
+        Integer memberCode = getMyCode();
 
         Date today = new Date();
         Locale currentLocale = new Locale("KOREAN", "KOREA");
@@ -41,7 +42,7 @@ public class VideoService {
                 .state("private")
                 .createdDt(formatter.format(today))
                 .views(0)
-                .likes(0)
+                .runningtime(runningTime)
                 .thumbnailUrl(thumbnailUrl)
                 .videoUrl(videoUrl)
                 .build();
@@ -109,5 +110,25 @@ public class VideoService {
         Video info = videoRepository.findById(id).get();
         info.setViews(info.getViews() + 1);
         videoRepository.save(info);
+    }
+
+    public List<VideoDto> getSubscribeVideos(List<Subscribe> subscribes){
+
+        List<Integer> subChannelIds = subscribes.stream().map(s -> s.getSubscribePK().getSubChannelCode()).collect(Collectors.toList());
+
+        List<Video> videos = videoRepository.findAllByMember_memberCodeInAndStateOrderByCreatedDtDesc(subChannelIds, "public");
+        return videos.stream().map(v -> new VideoDto(v)).collect(Collectors.toList());
+    }
+
+    public void deleteVideos(List<Integer> ids) {
+        List<Video> videos = videoRepository.findAllById(ids);
+        videos.forEach(v -> v.setState("deleted"));
+        videoRepository.saveAll(videos);
+    }
+
+    private Integer getMyCode(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserCustom userDetails = (UserCustom)principal;
+        return userDetails.getMemberCode();
     }
 }

@@ -8,6 +8,8 @@ import { authApi } from "../api/api";
 
 function MyPlaylist() {
   const [state, setState] = useState(false);
+  const [delModal, setDelModal] = useState(false);
+  const [checkCount, setCheckCount] = useState(0);
   const [playlist, setPlaylist] = useState([]);
   const [page, setPage] = useState(1);
   const offset = (page - 1) * 10;
@@ -16,6 +18,22 @@ function MyPlaylist() {
 
   const openModal = () => {
     setState(true);
+  };
+
+  const openDelModal = () => {
+    const checkedCount = document.querySelectorAll(
+      'input[name="playlist"]:checked'
+    ).length;
+    if (checkedCount === 0) {
+      alert("선택된 재생목록이 없습니다.");
+      return;
+    }
+    setCheckCount(checkedCount);
+    setDelModal(true);
+  };
+
+  const closeDelModal = () => {
+    setDelModal(false);
   };
 
   const openUpdateModal = (id) => {
@@ -43,6 +61,22 @@ function MyPlaylist() {
     });
   };
 
+  const deletePlaylists = async () => {
+    const playlists = document.querySelectorAll(
+      'input[name="playlist"]:checked'
+    );
+
+    const ids = [];
+    playlists.forEach((r) => ids.push(r.value));
+    await authApi
+      .delete("/api/playlist/deletePlaylists", { data: { playlistIds: ids } })
+      .then(() => {
+        closeDelModal();
+        getPlayList();
+        setCheckCount(0);
+      });
+  };
+
   useEffect(() => {
     getPlayList().then();
   }, []);
@@ -61,6 +95,21 @@ function MyPlaylist() {
           size={"mini"}
         >
           <SetPlaylist id={selected} afterFn={closeModal} />
+        </Modal>
+      </div>
+      <div className={styles.selectAction}>
+        <button className={styles.deleteBtn} onClick={openDelModal}>
+          삭제
+        </button>
+        <Modal
+          open={delModal}
+          close={closeDelModal}
+          title={"재생목록 삭제"}
+          isCheck={true}
+          checkFn={deletePlaylists}
+          size={"mini"}
+        >
+          총 {checkCount}개의 재생목록을 삭제 하시겠습니까?
         </Modal>
       </div>
       <table className={styles.table}>
@@ -92,8 +141,9 @@ function MyPlaylist() {
               <td className={styles.checkBoxCol}>
                 <input
                   type="checkbox"
-                  id={`checkBox_video_${index}`}
+                  id={`checkBox_playlist_${index}`}
                   name={"playlist"}
+                  value={item.playlistId}
                 />
                 <label
                   htmlFor={`checkBox_playlist_${index}`}

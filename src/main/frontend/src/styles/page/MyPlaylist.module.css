@@ -34,9 +34,9 @@
 
 .table thead{
     position: sticky;
-    top: 49px;
+    top: 84.5px;
     background-color: black;
-    z-index:9;
+    z-index:8;
 }
 
 .table thead tr th{
@@ -120,4 +120,26 @@ input[type="checkbox"] {
     height: 112px;
     display: inline-block;
     padding: 10px;
+}
+
+.selectAction{
+    width: 100%;
+    padding: 5px;
+    position: sticky;
+    top: 49px;
+    z-index: 9;
+    background-color: black;
+}
+
+.deleteBtn{
+    background-color: #282828;
+    border: none;
+    height: 25px;
+    color: white;
+    width: 50px;
+    font-size: 0.8rem;
+}
+
+.deleteBtn:hover{
+    background-color: #585858;
 }

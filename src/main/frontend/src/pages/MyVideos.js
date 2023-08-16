@@ -9,6 +9,8 @@ import * as common from "common.js";
 
 function MyVideos() {
   const [state, setState] = useState(false);
+  const [delModal, setDelModal] = useState(false);
+  const [checkCount, setCheckCount] = useState(0);
   const [type, setType] = useState("upload");
   const [videoId, setVideoId] = useState("");
   const [videos, setVideos] = useState([]);
@@ -25,6 +27,22 @@ function MyVideos() {
     getMyVideos();
   };
 
+  const openDelModal = () => {
+    const checkedCount = document.querySelectorAll(
+      'input[name="video"]:checked'
+    ).length;
+    if (checkedCount === 0) {
+      alert("선택된 동영상이 없습니다.");
+      return;
+    }
+    setCheckCount(checkedCount);
+    setDelModal(true);
+  };
+
+  const closeDelModal = () => {
+    setDelModal(false);
+  };
+
   const openUpdateModal = (id) => {
     openModal();
     setVideoId(id);
@@ -35,6 +53,20 @@ function MyVideos() {
     authApi.get("/api/video/getMyVideos").then((response) => {
       setVideos(response.data.data);
     });
+  };
+
+  const deleteVideos = async () => {
+    const videos = document.querySelectorAll('input[name="video"]:checked');
+
+    const ids = [];
+    videos.forEach((r) => ids.push(r.value));
+    await authApi
+      .delete("/api/video/deleteVideos", { data: { videoIds: ids } })
+      .then(() => {
+        closeDelModal();
+        getMyVideos();
+        setCheckCount(0);
+      });
   };
 
   useEffect(() => {
@@ -68,14 +100,27 @@ function MyVideos() {
           )}
         </Modal>
       </div>
+      <div className={styles.selectAction}>
+        <button className={styles.deleteBtn} onClick={openDelModal}>
+          삭제
+        </button>
+        <Modal
+          open={delModal}
+          close={closeDelModal}
+          title={"동영상 삭제"}
+          isCheck={true}
+          checkFn={deleteVideos}
+          size={"mini"}
+        >
+          총 {checkCount}개의 동영상을 삭제 하시겠습니까?
+        </Modal>
+      </div>
       <table className={styles.videoTable}>
         <colgroup>
           <col width="5%" />
-          <col width="40%" />
+          <col width="60%" />
           <col width="10%" />
           <col width="15%" />
-          <col width="10%" />
-          <col width="10%" />
           <col width="10%" />
         </colgroup>
         <thead>
@@ -91,8 +136,6 @@ function MyVideos() {
             <th>공개상태</th>
             <th>날짜</th>
             <th>조회수</th>
-            <th>댓글</th>
-            <th>좋아요</th>
           </tr>
         </thead>
         <tbody>
@@ -103,6 +146,7 @@ function MyVideos() {
                   type="checkbox"
                   id={`checkBox_video_${index}`}
                   name={"video"}
+                  value={video.videoId}
                 />
                 <label
                   htmlFor={`checkBox_video_${index}`}
@@ -126,8 +170,6 @@ function MyVideos() {
               <td>{common.getVideoState(video.state)}</td>
               <td>{video.createdDt}</td>
               <td>{video.views}</td>
-              <td></td>
-              <td>{video.likes}</td>
             </tr>
           ))}
         </tbody>

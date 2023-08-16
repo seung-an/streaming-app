@@ -5,9 +5,16 @@
     padding: 20px 5%;
 }
 
-.playlistInfoBox{
-    width: 30%;
+.miniContent{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
     height: 100%;
+}
+
+.playlistInfoBox{
+    width: 100%;
     padding: 10px;
     border-radius: 10px;
 }
@@ -51,15 +58,22 @@
 }
 
 .playlistVideoBox{
-    width: 70%;
+    width: 100%;
     height: 100%;
     margin: 10px;
     border-radius: 10px;
     overflow-y: scroll;
 }
 
+.miniPlaylistVideoBox{
+    width: 100%;
+    height: 100%;
+    margin: 10px;
+    border-radius: 10px;
+}
+
 .video{
     width: 100%;
-    padding: 10px;
+    padding-bottom: 10px;
     border-radius: 10px;
 }

@@ -119,6 +119,17 @@ public class MemberService {
         return member.getMemberCode();
     }
 
+    public ChannelDto getUserInfo() throws Exception{
+
+        Optional<Member> info = memberRepository.findById(getMyCode());
+
+        if(!info.isPresent()){
+            throw new Exception("존재하지 않는 채널 입니다.");
+        }
+
+        return new ChannelDto(info.get());
+    }
+
     public ChannelDto getChannelInfoByCode(Integer code) throws Exception{
 
         Optional<Member> info = memberRepository.findById(code);

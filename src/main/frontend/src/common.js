@@ -80,4 +80,30 @@ export function isSameDate(date1, date2) {
   );
 }
 
+export function formatRunningTime(seconds) {
+  var hour, min, sec, result;
+
+  hour = parseInt(seconds / 3600);
+  min = parseInt((seconds % 3600) / 60);
+  sec = seconds % 60;
+
+  if (hour.toString().length == 1) hour = "0" + hour;
+
+  if (min.toString().length == 1) min = "0" + min;
+
+  if (sec.toString().length == 1) sec = "0" + sec;
+
+  result = hour + " : " + min + " : " + sec;
+
+  if (hour == "00") {
+    if (min.substr(0, 1) == "0") {
+      result = min.substr(1, 1) + " : " + sec;
+    } else {
+      result = min + " : " + sec;
+    }
+  }
+
+  return result;
+}
+
 function formatHistoryDate() {}

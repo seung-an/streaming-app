@@ -42,9 +42,9 @@
 
 .videoTable thead{
     position: sticky;
-    top: 49px;
+    top: 84.5px;
     background-color: black;
-    z-index:9;
+    z-index:8;
 }
 .videoTable thead tr th{
     border-bottom: 2px solid #282828;
@@ -145,4 +145,26 @@ input[type="checkbox"] {
     border: none;
     word-break: break-all;
     word-wrap: break-word;
+}
+
+.selectAction{
+    width: 100%;
+    padding: 5px;
+    position: sticky;
+    top: 49px;
+    z-index: 9;
+    background-color: black;
+}
+
+.deleteBtn{
+    background-color: #282828;
+    border: none;
+    height: 25px;
+    color: white;
+    width: 50px;
+    font-size: 0.8rem;
+}
+
+.deleteBtn:hover{
+    background-color: #585858;
 }

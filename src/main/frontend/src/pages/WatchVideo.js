@@ -12,9 +12,8 @@ import AddPlaylistVideo from "./AddPlaylistVideo";
 
 function WatchVideo() {
   const { id } = useParams();
-  const memberCode = Number(localStorage.getItem("memberCode"));
-  const memberName = localStorage.getItem("memberName");
-  const memberImage = localStorage.getItem("memberImage");
+
+  const [userInfo, setUserInfo] = useState(null);
 
   const [videoInfo, setVideoInfo] = useState(null);
   const [channelInfo, setChannelInfo] = useState(null);
@@ -41,16 +40,18 @@ function WatchVideo() {
     });
   };
 
+  const getUserInfo = async () => {
+    await authApi.get("/api/member/getUserInfo").then((response) => {
+      setUserInfo(response.data.data);
+    });
+  };
+
   const getChannelInfo = async (code) => {
     await authApi
       .get("/api/member/getChannelInfoByCode/" + code)
       .then((response) => {
         setChannelInfo(response.data.data);
       });
-  };
-
-  const increaseViews = async () => {
-    await authApi.get("/api/video/increaseViews/" + id).then((response) => {});
   };
 
   const getComments = async () => {
@@ -87,20 +88,26 @@ function WatchVideo() {
     await authApi.get("/api/history/saveHistory/" + id).then((response) => {});
   };
 
+  const increaseViews = async () => {
+    await authApi.get("/api/video/increaseViews/" + id).then((response) => {});
+  };
+
   useEffect(() => {
-    getVideoInfo().then(() => {
-      increaseViews().then(() => {
-        getComments().then(() => {
-          saveHistory().then();
+    getUserInfo().then(() => {
+      getVideoInfo().then(() => {
+        increaseViews().then(() => {
+          getComments().then(() => {
+            saveHistory().then();
+          });
         });
       });
     });
   }, []);
 
   return (
-    <div>
+    <div className={styles.contentsBox}>
       {videoInfo != null ? (
-        <div>
+        <div className={styles.videoInfoBox}>
           <div className={styles.videoBox}>
             <CustomVideo
               videoUrl={videoInfo.videoUrl}
@@ -150,24 +157,28 @@ function WatchVideo() {
           </div>
         </div>
       ) : null}
-      <div className={styles.newCommentBox}>
-        <img className={styles.channelImage} src={memberImage} />
-        <div className={styles.newCommentInfo}>
-          <div className={styles.commentChannelName}>{memberName}</div>
-          <textarea
-            rows={1}
-            className={styles.inputComment}
-            type={"text"}
-            value={newComment}
-            onChange={changeNewComment}
-            placeholder={"댓글 추가"}
-            ref={newCommentRef}
-          />
+      {userInfo !== null ? (
+        <div className={styles.newCommentBox}>
+          <img className={styles.channelImage} src={userInfo.channelImage} />
+          <div className={styles.newCommentInfo}>
+            <div className={styles.commentChannelName}>
+              {userInfo.channelName}
+            </div>
+            <textarea
+              rows={1}
+              className={styles.inputComment}
+              type={"text"}
+              value={newComment}
+              onChange={changeNewComment}
+              placeholder={"댓글 추가"}
+              ref={newCommentRef}
+            />
+          </div>
+          <button className={styles.addCommentBtn} onClick={addComment}>
+            추가
+          </button>
         </div>
-        <button className={styles.addCommentBtn} onClick={addComment}>
-          추가
-        </button>
-      </div>
+      ) : null}
       <div className={styles.commentsBox}>
         {comments.map((comment) => (
           <div key={comment.commentId} className={styles.eachComment}>
@@ -187,13 +198,14 @@ function WatchVideo() {
               </div>
               <VariableText text={comment.content} limit={"2"} />
             </div>
-            {comment.channelCode === memberCode ? (
+            {comment.channel.channelCode === userInfo.channelCode ? (
               <div>
                 <DeleteIcon
                   id={comment.commentId}
                   delFun={deleteComment}
-                  width={"20"}
-                  height={"20"}
+                  width={"15"}
+                  height={"15"}
+                  title={"댓글 삭제"}
                 />
               </div>
             ) : null}

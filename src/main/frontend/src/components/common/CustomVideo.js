@@ -1,5 +1,6 @@
 import cookie from "react-cookies";
 import styles from "styles/common/CustomVideo.module.css";
+import { authApi } from "../../api/api";
 
 function CustomVideo({ videoUrl, thumbnailUrl }) {
   const playVideo = () => {
@@ -28,6 +29,7 @@ function CustomVideo({ videoUrl, thumbnailUrl }) {
         controlsList={"nodownload"}
         playsInline={true}
         onCanPlay={playVideo}
+        onplay
         onVolumeChange={changeVolume}
         poster={
           thumbnailUrl != null && thumbnailUrl != "" ? thumbnailUrl : null

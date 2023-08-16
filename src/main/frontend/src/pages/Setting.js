@@ -24,16 +24,12 @@ function Setting() {
   };
 
   const getInfo = async () => {
-    await authApi
-      .get(
-        "/api/member/getChannelInfoByCode/" + localStorage.getItem("memberCode")
-      )
-      .then((response) => {
-        setName(response.data.data.channelName);
-        setHandle(response.data.data.channelHandle);
-        setChannelImage(response.data.data.channelImage);
-        setOriginImage(response.data.data.channelImage);
-      });
+    await authApi.get("/api/member/getUserInfo").then((response) => {
+      setName(response.data.data.channelName);
+      setHandle(response.data.data.channelHandle);
+      setChannelImage(response.data.data.channelImage);
+      setOriginImage(response.data.data.channelImage);
+    });
   };
 
   const checkName = () => {
@@ -111,9 +107,6 @@ function Setting() {
           imageUrl: changeImageUrl,
         })
         .then((response) => {
-          localStorage.setItem("memberCode", response.data.data.channelCode);
-          localStorage.setItem("memberName", response.data.data.channelName);
-          localStorage.setItem("memberImage", response.data.data.channelImage);
           closeModal();
         });
     };

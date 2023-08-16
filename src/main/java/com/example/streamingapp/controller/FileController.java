@@ -1,25 +1,30 @@
 package com.example.streamingapp.controller;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import com.example.streamingapp.service.VideoService;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.*;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.event.ProgressListener;
+import com.example.streamingapp.dto.VideoDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 import java.util.List;
 
@@ -120,6 +125,63 @@ public class FileController {
                 amazonS3Client.abortMultipartUpload(new AbortMultipartUploadRequest(
                         bucket, uploadKey, uploadId));
             }
+            return "";
+        }
+    }
+
+    private Upload pgUpload;
+    private int progress = 0;
+
+    public String videoUploadProgress(MultipartFile multipartFile, SseEmitter emitter){
+        String uploadKey = "";
+        try {
+
+            uploadKey = "video/" + UUID.randomUUID();
+            String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + uploadKey;
+
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(multipartFile.getContentType());
+            metadata.setContentLength(multipartFile.getSize());
+
+            TransferManager tm = TransferManagerBuilder.standard()
+                    .withS3Client(amazonS3Client)
+                    .build();
+
+            PutObjectRequest request = new PutObjectRequest(
+                    bucket, uploadKey, multipartFile.getInputStream(), metadata);
+
+
+            progress = 0;
+            pgUpload = null;
+
+            request.setGeneralProgressListener(new ProgressListener() {
+                @Override
+                public void progressChanged(ProgressEvent progressEvent) {
+                    if(pgUpload == null) return;
+
+                    int percent = (int)pgUpload.getProgress().getPercentTransferred();
+                    if(progress != percent) {
+                        try {
+                            emitter.send(SseEmitter.event().name("progress").data(percent));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        progress = percent;
+                    }
+                }
+            });
+
+            pgUpload = tm.upload(request);
+
+            pgUpload.waitForCompletion();
+
+            return fileUrl;
+        }catch (AmazonClientException amazonClientException) {
+            System.out.println("Unable to upload file, upload aborted.");
+            amazonClientException.printStackTrace();
+            return "";
+        }
+        catch (Exception e) {
             return "";
         }
     }

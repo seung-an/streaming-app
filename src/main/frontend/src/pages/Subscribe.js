@@ -1,20 +1,24 @@
+import { authApi } from "../api/api";
+import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import VideoCard from "../components/common/VideoCard";
-import { useEffect, useState } from "react";
-import { authApi } from "../api/api";
-import styles from "styles/page/ChannelVideos.module.css";
+import styles from "../styles/page/ChannelVideos.module.css";
 import { useOutletContext } from "react-router-dom";
 
-function ChannelVideos() {
+function Subscribe() {
   const [videos, setVideos] = useState([]);
-  const { handle, contentsRef } = useOutletContext();
+  const { contentsRef } = useOutletContext();
   const [offset, setOffset] = useState(0);
 
-  useEffect(() => {
-    authApi.get("/api/video/getChannelVideos/" + handle).then((response) => {
+  const getSubscribeVideos = async () => {
+    await authApi.get("/api/video/getSubscribeVideos").then((response) => {
       setVideos(response.data.data);
     });
-  }, [handle]);
+  };
+
+  useEffect(() => {
+    getSubscribeVideos().then();
+  }, []);
 
   useEffect(() => {
     if (videos.length === 0) return;
@@ -37,7 +41,7 @@ function ChannelVideos() {
       <Row xs={1} sm={1} md={2} lg={3} xxl={4} className="g-4">
         {videos.slice(0, Math.min(videos.length, offset + 12)).map((video) => (
           <Col key={video.videoId}>
-            <VideoCard videoInfo={video} />
+            <VideoCard videoInfo={video} viewChannel={true} />
           </Col>
         ))}
       </Row>
@@ -45,4 +49,4 @@ function ChannelVideos() {
   );
 }
 
-export default ChannelVideos;
+export default Subscribe;

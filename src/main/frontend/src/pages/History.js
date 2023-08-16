@@ -3,9 +3,12 @@ import { authApi } from "../api/api";
 import { useEffect, useState } from "react";
 import VideoCardHorizon from "../components/common/VideoCardHorizon";
 import * as common from "common.js";
+import { useOutletContext } from "react-router-dom";
 
 function History() {
   const [histories, setHistories] = useState([]);
+  const { contentsRef, winSize } = useOutletContext();
+  const [offset, setOffset] = useState(0);
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -60,18 +63,40 @@ function History() {
     getHistories().then();
   }, []);
 
+  useEffect(() => {
+    if (histories.length === 0) return;
+
+    contentsRef.current.addEventListener("scroll", function () {
+      const addScrollTop =
+        (contentsRef.current.scrollHeight - contentsRef.current.offsetHeight) *
+        0.9;
+
+      if (contentsRef.current.scrollTop >= addScrollTop) {
+        if (histories.length >= offset + 12) {
+          setOffset((curr) => curr + 12);
+        }
+      }
+    });
+  }, [histories]);
+
   return (
     <div>
       <div className={styles.pageTitle}>시청 기록</div>
       <div>
-        {histories.map((history) => (
-          <div className={styles.video}>
-            {currDate !== history.watchDt.split(" ")[0] ? (
-              <div className={styles.date}>{setWatchDt(history.watchDt)}</div>
-            ) : null}
-            <VideoCardHorizon videoInfo={history} deleteFun={deleteHistory} />
-          </div>
-        ))}
+        {histories
+          .slice(0, Math.min(histories.length, offset + 12))
+          .map((history) => (
+            <div className={styles.video}>
+              {currDate !== history.watchDt.split(" ")[0] ? (
+                <div className={styles.date}>{setWatchDt(history.watchDt)}</div>
+              ) : null}
+              <VideoCardHorizon
+                videoInfo={history}
+                deleteFun={deleteHistory}
+                imageSize={winSize ? "mini" : ""}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );

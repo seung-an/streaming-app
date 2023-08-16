@@ -38,9 +38,9 @@ public class Video {
     private Integer views;
 
     @Column(nullable = false)
-    private Integer likes;
+    private Integer runningtime;
 
-    @Column(name="thumbnail_url")
+    @Column(name="thumbnail_url", nullable = false)
     private String thumbnailUrl;
 
     @Column(name="video_url", nullable = false)

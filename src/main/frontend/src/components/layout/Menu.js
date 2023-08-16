@@ -13,10 +13,10 @@ function Menu({ subscribeList }) {
 
   const defaultMenus = [
     { name: "홈", path: "/", icon: iconHome },
+    { name: "구독", path: "/subscribe", icon: iconSubscribe },
     { name: "시청 기록", path: "/history", icon: iconHistory },
     { name: "내 동영상", path: "/myVideos", icon: iconMyVideo },
     { name: "재생목록", path: "/myPlaylist", icon: iconPlaylist },
-    { name: "테스트", path: "/test", icon: iconSubscribe },
   ];
 
   const addMenus = [{ name: "설정", path: "/setting", icon: iconSetting }];

@@ -16,4 +16,5 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
 
     List<Video> findAllByMember_HandleAndStateOrderByCreatedDtDesc(String handle, String state);
 
+    List<Video> findAllByMember_memberCodeInAndStateOrderByCreatedDtDesc(List<Integer> channelIds, String state);
 }

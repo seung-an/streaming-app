@@ -104,7 +104,9 @@ function UpdateVideo({ id, afterSave }) {
         <div className={styles.dataSection}>
           <div
             className={
-              title.length > 100 ? styles.errorItemBox : styles.itemBox
+              title != null && title.length > 100
+                ? styles.errorItemBox
+                : styles.itemBox
             }
           >
             <div>제목</div>
@@ -116,15 +118,19 @@ function UpdateVideo({ id, afterSave }) {
             />
             <div
               className={
-                title.length > 100 ? styles.errorTextLength : styles.textLength
+                title != null && title.length > 100
+                  ? styles.errorTextLength
+                  : styles.textLength
               }
             >
-              ({title.length}/100)
+              ({title != null ? title.length : 0}/100)
             </div>
           </div>
           <div
             className={
-              description.length > 5000 ? styles.errorItemBox : styles.itemBox
+              description != null && description.length > 5000
+                ? styles.errorItemBox
+                : styles.itemBox
             }
           >
             <div>설명</div>
@@ -136,12 +142,12 @@ function UpdateVideo({ id, afterSave }) {
             />
             <div
               className={
-                description.length > 5000
+                description != null && description.length > 5000
                   ? styles.errorTextLength
                   : styles.textLength
               }
             >
-              ({description.length}/5000)
+              ({description != null ? description.length : 0}/5000)
             </div>
           </div>
           <div className={styles.itemBox}>

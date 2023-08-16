@@ -1,24 +1,10 @@
 import delIcon from "icons/icon-delete.png";
-import delIconHover from "icons/icon-delete-hover.png";
-import { useRef, useState } from "react";
-
-function DeleteIcon({ id, delFun, width, height }) {
-  const [isHover, setIsHover] = useState();
-
-  const style = {
-    width: width + "px",
-    height: height + "px",
-    cursor: "pointer",
-  };
-
+import styles from "styles/common/DeleteIcon.module.css";
+function DeleteIcon({ id, delFun, title }) {
   return (
-    <img
-      style={style}
-      src={isHover ? delIconHover : delIcon}
-      onMouseOver={() => setIsHover(true)}
-      onMouseOut={() => setIsHover(false)}
-      onClick={(e) => delFun(e, id)}
-    />
+    <div className={styles.box} title={title} onClick={(e) => delFun(e, id)}>
+      <img className={styles.icon} src={delIcon} />
+    </div>
   );
 }
 

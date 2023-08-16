@@ -1,5 +1,3 @@
-import { Card } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "styles/common/VideoCard.module.css";
 import * as common from "common.js";
 import { useNavigate } from "react-router-dom";
@@ -17,14 +15,17 @@ function VideoCard({ videoInfo, effHover, viewChannel }) {
   };
 
   return (
-    <Card
+    <div
       className={effHover === true ? styles.video : styles.noHvVideo}
       onClick={goWatch}
     >
-      <Card.Header className={"ratio ratio-16x9"}>
+      <div className={styles.videoHeader}>
         <img src={videoInfo.thumbnailUrl} className={styles.videoImg} />
-      </Card.Header>
-      <Card.Body className={styles.videoBody}>
+        <div className={styles.runningTime}>
+          {common.formatRunningTime(videoInfo.runningTime)}
+        </div>
+      </div>
+      <div className={styles.videoBody}>
         {viewChannel === true ? (
           <img
             className={styles.channelImg}
@@ -51,8 +52,8 @@ function VideoCard({ videoInfo, effHover, viewChannel }) {
             </div>
           </div>
         </div>
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }
 

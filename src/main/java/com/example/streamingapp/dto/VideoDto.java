@@ -12,7 +12,7 @@ public class VideoDto {
     private String description;
     private String state;
     private Integer views;
-    private Integer likes;
+    private Integer runningTime;
     private String createdDt;
     private String thumbnailUrl;
     private String videoUrl;
@@ -24,7 +24,7 @@ public class VideoDto {
         this.description = video.getDescription();
         this.state = video.getState();
         this.views = video.getViews();
-        this.likes = video.getLikes();
+        this.runningTime = video.getRunningtime();
         this.createdDt = video.getCreatedDt();
         this.thumbnailUrl = video.getThumbnailUrl();
         this.videoUrl = video.getVideoUrl();

@@ -11,6 +11,8 @@ public class HistoryDto {
     private String title;
     private String description;
     private Integer views;
+
+    private Integer runningTime;
     private String thumbnailUrl;
     private String createdDt;
     private String watchDt;
@@ -21,6 +23,7 @@ public class HistoryDto {
         this.title = history.getVideo().getTitle();
         this.description = history.getVideo().getDescription();
         this.views = history.getVideo().getViews();
+        this.runningTime = history.getVideo().getRunningtime();
         this.thumbnailUrl = history.getVideo().getThumbnailUrl();
         this.createdDt = history.getVideo().getCreatedDt();
         this.watchDt = history.getWatchDt();

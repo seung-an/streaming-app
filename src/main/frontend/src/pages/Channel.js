@@ -17,7 +17,7 @@ function Channel() {
   const { handle } = useParams();
   const [info, setInfo] = useState({});
   const [isSub, setIsSub] = useState(false);
-  const { getSubscribeList } = useOutletContext();
+  const { getSubscribeList, contentsRef } = useOutletContext();
 
   const tabs = [
     { name: "동영상", path: "" },
@@ -111,7 +111,7 @@ function Channel() {
           </Link>
         ))}
       </div>
-      <Outlet context={{ handle }} />
+      <Outlet context={{ handle, contentsRef }} />
     </div>
   );
 }

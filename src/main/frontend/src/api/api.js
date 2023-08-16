@@ -66,6 +66,8 @@ authApi.interceptors.response.use(
           });
         // 요청 실패했던 요청 새로운 accessToken으로 재요청
         return axios(originalRequest);
+      } else if (error.response.data.code === 1001) {
+        window.location.href = "/login";
       }
     }
 

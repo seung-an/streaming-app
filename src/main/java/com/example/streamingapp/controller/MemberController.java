@@ -139,6 +139,23 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/getUserInfo")
+    public ResponseEntity getUserInfo(){
+        JSONObject resJobj = new JSONObject();
+        try{
+            ChannelDto info = memberService.getUserInfo();
+            resJobj.put("status", "SUCCESS");
+            resJobj.put("data", info);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e) {
+            resJobj = new JSONObject();
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/getChannelInfoByCode/{code}")
     public ResponseEntity getChannelInfoByCode(@PathVariable String code){
         JSONObject resJobj = new JSONObject();

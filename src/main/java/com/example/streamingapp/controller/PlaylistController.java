@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -125,6 +126,40 @@ public class PlaylistController {
             List<VideoDto> data = playlistService.getPlaylistVideos(Integer.parseInt(id));
             resJobj.put("status", "SUCCESS");
             resJobj.put("data", data);
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e){
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{playlistId}/delete/{videoId}")
+    public ResponseEntity deletePlaylistVideo(@PathVariable String playlistId, @PathVariable String videoId){
+        JSONObject resJobj = new JSONObject();
+        try{
+            playlistService.deletePlaylistVideo(Integer.parseInt(playlistId), Integer.parseInt(videoId));
+            resJobj.put("status", "SUCCESS");
+            return new ResponseEntity(resJobj, HttpStatus.OK);
+        }
+        catch(Exception e){
+            resJobj.put("status", "ERROR");
+            resJobj.put("message", e.getMessage());
+            return new ResponseEntity(resJobj, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deletePlaylists")
+    public ResponseEntity deletePlaylists(@RequestBody Map<String, Object> data){
+        JSONObject resJobj = new JSONObject();
+        try{
+            List<Integer> ids = ((List<String>) data.get("playlistIds")).stream()
+                    .map(id -> Integer.parseInt(id))
+                    .collect(Collectors.toList());
+
+            playlistService.deletePlaylists(ids);
+            resJobj.put("status", "SUCCESS");
             return new ResponseEntity(resJobj, HttpStatus.OK);
         }
         catch(Exception e){

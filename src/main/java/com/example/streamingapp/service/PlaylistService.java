@@ -47,13 +47,13 @@ public class PlaylistService {
 
     @Transactional
     public List<PlaylistDto> getPlaylist(){
-        List<Playlist> playlists = playlistRepository.findAllByMemberCode(getMyCode());
+        List<Playlist> playlists = playlistRepository.findAllByMemberCodeAndStateNotOrderByCreatedDtDesc(getMyCode(), "deleted");
         return playlists.stream().map(p -> new PlaylistDto(p)).collect(Collectors.toList());
     }
 
     @Transactional
     public List<PlaylistDto> getPlaylistByHandle(String handle){
-        List<Playlist> playlists = playlistRepository.findAllByMemberHandle(handle);
+        List<Playlist> playlists = playlistRepository.findAllByMemberHandleAndStateOrderByUpdateDtDesc(handle, "public");
         return playlists.stream().map(p -> new PlaylistDto(p)).collect(Collectors.toList());
     }
 
@@ -119,8 +119,26 @@ public class PlaylistService {
 
     @Transactional
     public List<VideoDto> getPlaylistVideos(Integer id){
-        List<PlaylistVideo> playlistVideos = playlistVideoRepository.findAllByPlaylistVideoPKPlaylistId(id);
+        List<PlaylistVideo> playlistVideos = playlistVideoRepository.findAllByPlaylistVideoPKPlaylistIdAndVideo_state(id, "public");
         return playlistVideos.stream().map(p -> new VideoDto(p.getVideo())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deletePlaylistVideo(Integer playlistId, Integer videoId) throws Exception{
+
+        Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+        if(!playlist.isPresent()){
+            throw new Exception("존재하지 않는 재생목록 입니다.");
+        }
+
+        playlistVideoRepository.deleteById(PlaylistVideoPK.builder().playlistId(playlistId).videoId(videoId).build());
+    }
+
+    public void deletePlaylists(List<Integer> ids) {
+        List<Playlist> playlists = playlistRepository.findAllById(ids);
+        playlists.forEach(p -> p.setState("deleted"));
+        playlistRepository.saveAll(playlists);
     }
 
     private Integer getMyCode(){

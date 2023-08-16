@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface HistoryRepository extends JpaRepository<History, HistoryPK> {
 
-    List<History> findAllByHistoryPKMemberCodeOrderByWatchDtDesc(Integer memberCode);
+    List<History> findAllByHistoryPKMemberCodeAndVideo_stateOrderByWatchDtDesc(Integer memberCode, String state);
 }

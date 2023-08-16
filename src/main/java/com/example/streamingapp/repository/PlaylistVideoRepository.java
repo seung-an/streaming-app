@@ -13,5 +13,5 @@ public interface PlaylistVideoRepository extends JpaRepository<PlaylistVideo, Pl
 
     Optional<PlaylistVideo> findFirstByPlaylistVideoPKPlaylistId(Integer playlistId);
 
-    List<PlaylistVideo> findAllByPlaylistVideoPKPlaylistId(Integer playlistId);
+    List<PlaylistVideo> findAllByPlaylistVideoPKPlaylistIdAndVideo_state(Integer playlistId, String state);
 }

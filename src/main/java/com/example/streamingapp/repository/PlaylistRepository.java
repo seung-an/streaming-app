@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, Integer> {
 
-    List<Playlist> findAllByMemberCode(Integer memberCode);
+    List<Playlist> findAllByMemberCodeAndStateNotOrderByCreatedDtDesc(Integer memberCode, String state);
 
-    List<Playlist> findAllByMemberHandle(String handle);
+    List<Playlist> findAllByMemberHandleAndStateOrderByUpdateDtDesc(String handle, String state);
 }

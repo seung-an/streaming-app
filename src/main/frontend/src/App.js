@@ -15,6 +15,7 @@ import ChannelPlaylist from "./pages/ChannelPlaylist";
 import Setting from "./pages/Setting";
 import MyPlaylist from "./pages/MyPlaylist";
 import PlaylistVideos from "./pages/PlaylistVideos";
+import Subscribe from "./pages/Subscribe";
 
 function App() {
   useEffect(() => {}, []);
@@ -26,6 +27,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path={"/"} element={<Home />} />
             <Route path={"/test"} element={<TestPage />} />
+            <Route path={"/subscribe"} element={<Subscribe />} />
             <Route path={"/myVideos"} element={<MyVideos />} />
             <Route path={"/myPlaylist"} element={<MyPlaylist />} />
             <Route path={"/watch/:id"} element={<WatchVideo />} />
