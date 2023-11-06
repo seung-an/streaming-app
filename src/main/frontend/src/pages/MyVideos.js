@@ -81,11 +81,15 @@ function MyVideos() {
     });
   };
 
+  const noUpload = () => {
+    alert("클라우드 용량 문제로 업로드 제한");
+  };
+
   return (
     <div className={styles.videoList}>
       <div className={styles.uploadBox}>
         <div className={styles.pageTitle}>동영상 관리</div>
-        <button className={styles.uploadBtn} onClick={openModal}>
+        <button className={styles.uploadBtn} onClick={noUpload}>
           동영상 업로드
         </button>
         <Modal
